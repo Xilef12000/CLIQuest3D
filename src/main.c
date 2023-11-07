@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/ioctl.h>
 
 const int world[20][20] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -33,15 +34,18 @@ clock_t start, end;
 int main(int argc, char const *argv[])
 {
     int key;
+    int bw;
     int px = 9;
     int py = 9;
     int pa = 0;
     system ("/bin/stty raw");
     system ("/bin/stty -echo");
-    while((key=getchar())!= '.') {
+    while(1) {
+        ioctl(0, FIONREAD, &bw);
         start = clock();
-        system ("/bin/stty cooked");
-        switch (key) {
+        if (bw > 0){
+            key=getchar();
+            switch (key) {
             case 'w':
                 px--;
                 break;
@@ -60,7 +64,12 @@ int main(int argc, char const *argv[])
             case 'e':
                 pa-=15;
                 break;
+            case  '.':
+                return 0;
+                break;
+            }
         }
+        system ("/bin/stty cooked");
         for (int i = 0; i < 20; i++){
             for (int n = 0; n < 20; n++){
                 screen[i][n] = 0;
