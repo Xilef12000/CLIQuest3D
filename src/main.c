@@ -50,9 +50,10 @@ int screen[20][20] = {
 int distance[90] = {};
 
 const char grey[66] = " .'`^,:;Il!i><~+_-?][}{1)(|tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8B@$";
-
+clock_t start, end;
 int main(int argc, char const *argv[])
 {
+    start = clock();
     for (int a = 0; a < 90 ; a++){
         int i = 0;
         int x1 = 9;
@@ -113,6 +114,8 @@ int main(int argc, char const *argv[])
         }
         printf("\n");
     } 
-    printf("\n");
+    end = clock();
+    double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("%f fps \n", 1/cpu_time_used);
     return 0;
 }
