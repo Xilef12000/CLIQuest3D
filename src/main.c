@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 const int world[20][20] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -103,7 +104,7 @@ int main(int argc, char const *argv[])
     printf("\n");
     for (int i = 0; i < 20; i++) {
         for (int j = 0; j < 90; j++) {
-            if (distance[j] >= i){
+            if (10-distance[j]/2 <= i && 10+distance[j]/2 >= i){
                 printf("#");
             }
             else {
