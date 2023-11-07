@@ -25,40 +25,51 @@ const int world[20][20] = {
     {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 };
-int screen[20][20] = {
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-};
+int screen[20][20];
 int distance[90] = {};
 
 const char grey[66] = " .'`^,:;Il!i><~+_-?][}{1)(|tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8B@$";
 clock_t start, end;
 int main(int argc, char const *argv[])
 {
-    while (1) {
+    int key;
+    int px = 9;
+    int py = 9;
+    int pa = 0;
+    system ("/bin/stty raw");
+    system ("/bin/stty -echo");
+    while((key=getchar())!= '.') {
         start = clock();
-        for (int a = 0; a < 90 ; a++){
+        system ("/bin/stty cooked");
+        switch (key) {
+            case 'w':
+                px--;
+                break;
+            case 'a':
+                py--;
+                break;
+            case 's':
+                px++;
+                break;
+            case 'd':
+                py++;
+                break;
+            case 'q':
+                pa+=15;
+                break;
+            case 'e':
+                pa-=15;
+                break;
+        }
+        for (int i = 0; i < 20; i++){
+            for (int n = 0; n < 20; n++){
+                screen[i][n] = 0;
+            }
+        }
+        for (int a = pa; a < pa + 90; a++){
             int i = 0;
-            int x1 = 9;
-            int y1 = 9;
+            int x1 = px;
+            int y1 = py;
             int y2 = 9.5+( sin(a*4*M_PI/180)*20);
             int x2 = 9.5+( cos(a*4*M_PI/180)*20);
 
@@ -69,7 +80,7 @@ int main(int argc, char const *argv[])
                 //printf("%d %d\n", x, y);
                 if (world[x1][y1] == 1){
                     screen[x1][y1] = 66;
-                    distance[a] = i;
+                    distance[a-pa] = i;
                     break;
                 }
                 if (screen[x1][y1] < i){
@@ -95,8 +106,12 @@ int main(int argc, char const *argv[])
                 }   
             }
         }
-        /*
-        screen[9][9] = 66;
+
+
+        printf("\e[1;1H\e[2J");
+
+        screen[px][py] = 65;
+        printf("%d, %d \n", px, py);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 //printf("%d ", screen[i][j]);
@@ -105,13 +120,15 @@ int main(int argc, char const *argv[])
             printf("\n");
         } 
         printf("\n");
-        */
-
-        printf("\e[1;1H\e[2J");
         
+        for (int j = 89; j >= 0; j--) {
+            printf("%c", grey[65 - distance[j]]);
+        }
+        printf("\n");
+
         for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 90; j++) {
-                if (10-distance[j]/2 <= i && 10+distance[j]/2 >= i){
+            for (int j = 89; j >= 0; j--) {
+                if (10-(20-distance[j])/2 <= i && 10+(20-distance[j])/2 >= i){
                     printf("#");
                 }
                 else {
@@ -121,8 +138,11 @@ int main(int argc, char const *argv[])
             printf("\n");
         } 
         end = clock();
-        double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-        printf("%f fps \n", 1/cpu_time_used);
+        printf("time: %f s \n", ((double) (end - start)) / CLOCKS_PER_SEC);
+
+        system ("/bin/stty raw");
     }
+    system ("/bin/stty cooked");
+    system ("/bin/stty echo");
     return 0;
 }
