@@ -11,26 +11,36 @@ int main(int argc, char const *argv[])
     int x2 = 18;
     int y2 = 10;
 
-    int dx = x2 - x1;
-    int dy = y2 - y1;
-    int D = 2*dy - dx;
-    int y = y1;
-    for (int x = x1; x < x2; x++){
+    int dx =  abs(x2 - x1), sx = x1<x2 ? 1 : -1;
+    int dy = -abs(y2 - y1), sy = y1<y2 ? 1 : -1;
+    int err = dx+dy, e2;
+    for (;;) {
         //printf("%d %d\n", x, y);
-        screen[x][y] = 1;
+        screen[x1][y1] = 1;
+        e2 = 2*err;
 
-        if (D > 0){
-            y++;
-            D -= 2*dx;
+        if (e2 >= dy) 
+        {
+            if (x1 == x2) 
+                break;
+            err += dy; 
+            x1 += sx;
         }
-        D += 2*dy;
+
+        else if (e2 <= dx) 
+        {
+            if (y1 == y2) 
+                break;
+            err += dx; 
+            y1 += sy;
+        }
     }
-    
+
     for (int i = 0; i < 20; i++) {
         for (int j = 0; j < 20; j++) {
             printf("%d ", screen[i][j]);
         }
         printf("\n");
     } 
-	return 0;
+    return 0;
 }
