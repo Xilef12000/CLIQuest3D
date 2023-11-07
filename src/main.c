@@ -46,17 +46,18 @@ int screen[20][20] = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
+int distance[90] = {};
 
 const char grey[66] = " .'`^,:;Il!i><~+_-?][}{1)(|tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8B@$";
 
 int main(int argc, char const *argv[])
 {
-    for (int a = 0; a < 360 ; a++){
+    for (int a = 0; a < 90 ; a++){
         int i = 0;
         int x1 = 9;
         int y1 = 9;
-        int y2 = 9.5+( sin(a*1*M_PI/180)*20);
-        int x2 = 9.5+( cos(a*1*M_PI/180)*20);
+        int y2 = 9.5+( sin(a*4*M_PI/180)*20);
+        int x2 = 9.5+( cos(a*4*M_PI/180)*20);
 
         int dx =  abs(x2 - x1), sx = x1<x2 ? 1 : -1;
         int dy = -abs(y2 - y1), sy = y1<y2 ? 1 : -1;
@@ -65,6 +66,7 @@ int main(int argc, char const *argv[])
             //printf("%d %d\n", x, y);
             if (world[x1][y1] == 1){
                 screen[x1][y1] = 66;
+                distance[a] = i;
                 break;
             }
             if (screen[x1][y1] < i){
@@ -98,5 +100,18 @@ int main(int argc, char const *argv[])
         }
         printf("\n");
     } 
+    printf("\n");
+    for (int i = 0; i < 20; i++) {
+        for (int j = 0; j < 90; j++) {
+            if (distance[j] >= i){
+                printf("#");
+            }
+            else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    } 
+    printf("\n");
     return 0;
 }
