@@ -53,69 +53,76 @@ const char grey[66] = " .'`^,:;Il!i><~+_-?][}{1)(|tfjrxnuvczXYUJCLQ0OZmwqpdbkhao
 clock_t start, end;
 int main(int argc, char const *argv[])
 {
-    start = clock();
-    for (int a = 0; a < 90 ; a++){
-        int i = 0;
-        int x1 = 9;
-        int y1 = 9;
-        int y2 = 9.5+( sin(a*4*M_PI/180)*20);
-        int x2 = 9.5+( cos(a*4*M_PI/180)*20);
+    while (1) {
+        start = clock();
+        for (int a = 0; a < 90 ; a++){
+            int i = 0;
+            int x1 = 9;
+            int y1 = 9;
+            int y2 = 9.5+( sin(a*4*M_PI/180)*20);
+            int x2 = 9.5+( cos(a*4*M_PI/180)*20);
 
-        int dx =  abs(x2 - x1), sx = x1<x2 ? 1 : -1;
-        int dy = -abs(y2 - y1), sy = y1<y2 ? 1 : -1;
-        int err = dx+dy, e2;
-        for (;;) {
-            //printf("%d %d\n", x, y);
-            if (world[x1][y1] == 1){
-                screen[x1][y1] = 66;
-                distance[a] = i;
-                break;
-            }
-            if (screen[x1][y1] < i){
-                screen[x1][y1] = i;  
-            }
-            i++;
-            e2 = 2*err;
-
-            if (e2 >= dy) 
-            {
-                if (x1 == x2) 
+            int dx =  abs(x2 - x1), sx = x1<x2 ? 1 : -1;
+            int dy = -abs(y2 - y1), sy = y1<y2 ? 1 : -1;
+            int err = dx+dy, e2;
+            for (;;) {
+                //printf("%d %d\n", x, y);
+                if (world[x1][y1] == 1){
+                    screen[x1][y1] = 66;
+                    distance[a] = i;
                     break;
-                err += dy; 
-                x1 += sx;
-            }
+                }
+                if (screen[x1][y1] < i){
+                    screen[x1][y1] = i;  
+                }
+                i++;
+                e2 = 2*err;
 
-            else if (e2 <= dx) 
-            {
-                if (y1 == y2) 
-                    break;
-                err += dx; 
-                y1 += sy;
-            }   
+                if (e2 >= dy) 
+                {
+                    if (x1 == x2) 
+                        break;
+                    err += dy; 
+                    x1 += sx;
+                }
+
+                else if (e2 <= dx) 
+                {
+                    if (y1 == y2) 
+                        break;
+                    err += dx; 
+                    y1 += sy;
+                }   
+            }
         }
+        /*
+        screen[9][9] = 66;
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                //printf("%d ", screen[i][j]);
+                printf("%c ", grey[screen[i][j]]);
+            }
+            printf("\n");
+        } 
+        printf("\n");
+        */
+
+        printf("\e[1;1H\e[2J");
+        
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 90; j++) {
+                if (10-distance[j]/2 <= i && 10+distance[j]/2 >= i){
+                    printf("#");
+                }
+                else {
+                    printf(" ");
+                }
+            }
+            printf("\n");
+        } 
+        end = clock();
+        double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+        printf("%f fps \n", 1/cpu_time_used);
     }
-    screen[9][9] = 66;
-    for (int i = 0; i < 20; i++) {
-        for (int j = 0; j < 20; j++) {
-            //printf("%d ", screen[i][j]);
-            printf("%c ", grey[screen[i][j]]);
-        }
-        printf("\n");
-    } 
-    printf("\n");
-    for (int i = 0; i < 20; i++) {
-        for (int j = 0; j < 90; j++) {
-            if (10-distance[j]/2 <= i && 10+distance[j]/2 >= i){
-                printf("#");
-            }
-            else {
-                printf(" ");
-            }
-        }
-        printf("\n");
-    } 
-    end = clock();
-    double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("%f fps \n", 1/cpu_time_used);
     return 0;
 }
