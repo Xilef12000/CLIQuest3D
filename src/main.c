@@ -28,6 +28,7 @@ const int world[20][20] = {
 };
 int screen[20][20];
 int distance[90] = {};
+float step = 0.5;
 
 const char grey[66] = " .'`^,:;Il!i><~+_-?][}{1)(|tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8B@$";
 int main(int argc, char const *argv[])
@@ -49,23 +50,23 @@ int main(int argc, char const *argv[])
             key=getchar();
             switch (key) {
             case 'w':
-                if(world[(int)(px-0.1)][(int)py] == 0){
-                    px-=0.1;
+                if(world[(int)(px-step)][(int)py] == 0){
+                    px-=step;
                 }
                 break;
             case 'a':
-                if(world[(int)px][(int)(py-0.1)] == 0){
-                    py-=0.1;
+                if(world[(int)px][(int)(py-step)] == 0){
+                    py-=step;
                 }
                 break;
             case 's':
-                if(world[(int)(px+0.1)][(int)py] == 0){
-                    px+=0.1;
+                if(world[(int)(px+step)][(int)py] == 0){
+                    px+=step;
                 }
                 break;
             case 'd':
-                if(world[(int)px][(int)(py+0.1)] == 0){
-                    py+=0.1;
+                if(world[(int)px][(int)(py+step)] == 0){
+                    py+=step;
                 }
                 break;
             case 'q':
