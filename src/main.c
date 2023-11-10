@@ -92,7 +92,7 @@ int main(int argc, char const *argv[])
                 pY = pNY;
             }
         }
-        system ("/bin/stty cooked");
+
         for (int i = 0; i < 20; i++){
             for (int n = 0; n < 20; n++){
                 screen[i][n] = 0;
@@ -110,7 +110,7 @@ int main(int argc, char const *argv[])
             float dy = -fabs(y2 - y1), sy = y1<y2 ? 1 : -1;
             float err = dx+dy, e2;
             for (;;) {
-                //printf("%d %d\n", x, y);
+                //printf("%d %d\r\n", x, y);
                 if (world[(int)x1][(int)y1] == 1){
                     screen[(int)x1][(int)y1] = 66;
                     distance[a-pA] = i;
@@ -142,7 +142,7 @@ int main(int argc, char const *argv[])
 
         //printf("\e[1;1H\e[2J");
         printf("\e[1;1H");
-        printf("X:%6.3f/Y:%6.3f/% 4d° \n", pX, pY, pA);
+        printf("X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA);
         /*
         screen[(int)pX][(int)pY] = 65;
         for (int i = 0; i < 20; i++) {
@@ -150,15 +150,15 @@ int main(int argc, char const *argv[])
                 //printf("%d ", screen[i][j]);
                 printf("%c ", grey[screen[i][j]]);
             }
-            fputs("\n", stdout);
+            fputs("\r\n", stdout);
         } 
-        fputs("\n", stdout);
+        fputs("\r\n", stdout);
         
         for (int j = cliX-1; j >= 0; j--) {
             printf("%c", grey[65 - distance[j]]);
         }
         */
-        fputs("\n", stdout);
+        fputs("\r\n", stdout);
         for (int i = 0; i < cliY; i++) {
             for (int j = cliX-1; j >= 0; j--) {
                 if (cliY/2-(cliY-map(distance[j],0,20,0,cliY))/2 <= i && cliY/2+(cliY-map(distance[j],0,20,0,cliY))/2 >= i){
@@ -168,17 +168,14 @@ int main(int argc, char const *argv[])
                     fputs(" ", stdout);
                 }
             }
-            fputs("\n", stdout);
+            fputs("\r\n", stdout);
         } 
         
         time_t time = clock() - lastt;
-        printf("time: %.3f ms; fps: %.0f \n", (((double) time) / CLOCKS_PER_SEC)*1000, 1.0/(((double) time) / CLOCKS_PER_SEC));
+        printf("time: %.3f ms; fps: %.0f \r\n", (((double) time) / CLOCKS_PER_SEC)*1000, 1.0/(((double) time) / CLOCKS_PER_SEC));
         lastt = clock();
-
-        system ("/bin/stty raw");
     }
-    system ("/bin/stty cooked");
-    system ("/bin/stty echo");
+    system ("/bin/stty sane");
     system ("tput cnorm");
     return 0;
 }
