@@ -30,9 +30,9 @@ int screen[20][20];
 int distance[90] = {};
 
 const char grey[66] = " .'`^,:;Il!i><~+_-?][}{1)(|tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8B@$";
-clock_t start, end;
 int main(int argc, char const *argv[])
-{
+{   
+    clock_t lastt = clock();
     int key;
     int bw;
     int px = 9;
@@ -43,7 +43,6 @@ int main(int argc, char const *argv[])
     int loop = 1;
     while(loop) {
         ioctl(0, FIONREAD, &bw);
-        start = clock();
         if (bw > 0){
             key=getchar();
             switch (key) {
@@ -147,8 +146,10 @@ int main(int argc, char const *argv[])
             }
             printf("\n");
         } 
-        end = clock();
-        printf("time: %f s \n", ((double) (end - start)) / CLOCKS_PER_SEC);
+        
+        time_t time = clock() - lastt;
+        printf("time: %.3f ms; fps: %.0f \n", (((double) time) / CLOCKS_PER_SEC)*1000, 1.0/(((double) time) / CLOCKS_PER_SEC));
+        lastt = clock();
 
         system ("/bin/stty raw");
     }
