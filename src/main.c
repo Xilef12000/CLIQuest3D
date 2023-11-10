@@ -35,8 +35,8 @@ int main(int argc, char const *argv[])
     clock_t lastt = clock();
     int key;
     int bw;
-    int px = 9;
-    int py = 9;
+    float px = 9;
+    float py = 9;
     int pa = 0;
     system ("/bin/stty raw");
     system ("/bin/stty -echo");
@@ -78,24 +78,24 @@ int main(int argc, char const *argv[])
             }
         }
         for (int a = pa; a < pa + 90; a++){
-            int i = 0;
-            int x1 = px;
-            int y1 = py;
-            int y2 = 9.5+( sin(a*4*M_PI/180)*20);
-            int x2 = 9.5+( cos(a*4*M_PI/180)*20);
+            float i = 0;
+            float x1 = px;
+            float y1 = py;
+            float y2 = 9.5+( sin(a*4*M_PI/180)*20);
+            float x2 = 9.5+( cos(a*4*M_PI/180)*20);
 
-            int dx =  abs(x2 - x1), sx = x1<x2 ? 1 : -1;
-            int dy = -abs(y2 - y1), sy = y1<y2 ? 1 : -1;
-            int err = dx+dy, e2;
+            float dx =  fabs(x2 - x1), sx = x1<x2 ? 1 : -1;
+            float dy = -fabs(y2 - y1), sy = y1<y2 ? 1 : -1;
+            float err = dx+dy, e2;
             for (;;) {
                 //printf("%d %d\n", x, y);
-                if (world[x1][y1] == 1){
-                    screen[x1][y1] = 66;
+                if (world[(int)x1][(int)y1] == 1){
+                    screen[(int)x1][(int)y1] = 66;
                     distance[a-pa] = i;
                     break;
                 }
-                if (screen[x1][y1] < i){
-                    screen[x1][y1] = i;  
+                if (screen[(int)x1][(int)y1] < i){
+                    screen[(int)x1][(int)y1] = i;  
                 }
                 i++;
                 e2 = 2*err;
@@ -121,8 +121,8 @@ int main(int argc, char const *argv[])
         //printf("\e[1;1H\e[2J");
         printf("\e[1;1H");
 
-        screen[px][py] = 65;
-        printf("%d, %d \n", px, py);
+        screen[(int)px][(int)py] = 65;
+        printf("%f, %f \n", px, py);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 //printf("%d ", screen[i][j]);
