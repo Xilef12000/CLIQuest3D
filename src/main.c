@@ -29,8 +29,13 @@ const int world[20][20] = {
 int screen[20][20];
 int distance[90] = {};
 float step = 0.5;
-
+int stepa = 5;
+int clix = 144;
+int cliy = 48;
 const char grey[66] = " .'`^,:;Il!i><~+_-?][}{1)(|tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8B@$";
+int map(int x, int in_min, int in_max, int out_min, int out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 int main(int argc, char const *argv[])
 {   
     clock_t lastt = clock();
@@ -70,10 +75,10 @@ int main(int argc, char const *argv[])
                 }
                 break;
             case 'q':
-                pa+=15;
+                pa+=stepa;
                 break;
             case 'e':
-                pa-=15;
+                pa-=stepa;
                 break;
             case  '.':
                 loop = 0;
@@ -86,12 +91,13 @@ int main(int argc, char const *argv[])
                 screen[i][n] = 0;
             }
         }
-        for (int a = pa; a < pa + 90; a++){
+        for (int a = pa; a < pa + clix; a++){
             float i = 0;
             float x1 = px;
             float y1 = py;
-            float y2 = 9.5+( sin(a*4*M_PI/180)*20);
-            float x2 = 9.5+( cos(a*4*M_PI/180)*20);
+            float rad = a*360/(double)clix*M_PI/180;
+            float y2 = 9.5+( sin(rad)*20);
+            float x2 = 9.5+( cos(rad)*20);
 
             float dx =  fabs(x2 - x1), sx = x1<x2 ? 1 : -1;
             float dy = -fabs(y2 - y1), sy = y1<y2 ? 1 : -1;
@@ -129,7 +135,7 @@ int main(int argc, char const *argv[])
 
         //printf("\e[1;1H\e[2J");
         printf("\e[1;1H");
-
+        /*
         screen[(int)px][(int)py] = 65;
         printf("%f, %f \n", px, py);
         for (int i = 0; i < 20; i++) {
@@ -141,13 +147,14 @@ int main(int argc, char const *argv[])
         } 
         fputs("\n", stdout);
         
-        for (int j = 89; j >= 0; j--) {
+        for (int j = clix-1; j >= 0; j--) {
             printf("%c", grey[65 - distance[j]]);
         }
+        */
         fputs("\n", stdout);
-        for (int i = 0; i < 20; i++) {
-            for (int j = 89; j >= 0; j--) {
-                if (10-(20-distance[j])/2 <= i && 10+(20-distance[j])/2 >= i){
+        for (int i = 0; i < cliy; i++) {
+            for (int j = clix-1; j >= 0; j--) {
+                if (cliy/2-(cliy-map(distance[j],0,20,0,cliy))/2 <= i && cliy/2+(cliy-map(distance[j],0,20,0,cliy))/2 >= i){
                     fputs("#", stdout);
                 }
                 else {
