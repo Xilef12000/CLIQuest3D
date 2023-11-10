@@ -28,57 +28,57 @@ const int world[20][20] = {
 };
 int screen[20][20];
 int distance[90] = {};
-float step = 0.5;
-int stepa = 5;
-int clix = 144;
-int cliy = 48;
+float stepXY = 0.5;
+int stepA = 5;
+int cliX = 144;
+int cliY = 48;
 const char grey[66] = " .'`^,:;Il!i><~+_-?][}{1)(|tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8B@$";
-int map(int x, int in_min, int in_max, int out_min, int out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+int map(int x, int inMin, int inMax, int outMin, int outMax) {
+  return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
 int main(int argc, char const *argv[])
 {   
     clock_t lastt = clock();
     int key;
-    int bw;
-    float px = 9;
-    float py = 9;
-    int pa = 0;
+    float pX = 9;
+    float pY = 9;
+    int pA = 0;
     system ("/bin/stty raw");
     system ("/bin/stty -echo");
     system ("tput civis");
     printf("\e[1;1H\e[2J");
     int loop = 1;
     while(loop) {
-        ioctl(0, FIONREAD, &bw);
-        if (bw > 0){
+        int inBuffer;
+        ioctl(0, FIONREAD, &inBuffer);
+        if (inBuffer > 0){
             key=getchar();
             switch (key) {
             case 'w':
-                if(world[(int)(px-step)][(int)py] == 0){
-                    px-=step;
+                if(world[(int)(pX-stepXY)][(int)pY] == 0){
+                    pX-=stepXY;
                 }
                 break;
             case 'a':
-                if(world[(int)px][(int)(py-step)] == 0){
-                    py-=step;
+                if(world[(int)pX][(int)(pY-stepXY)] == 0){
+                    pY-=stepXY;
                 }
                 break;
             case 's':
-                if(world[(int)(px+step)][(int)py] == 0){
-                    px+=step;
+                if(world[(int)(pX+stepXY)][(int)pY] == 0){
+                    pX+=stepXY;
                 }
                 break;
             case 'd':
-                if(world[(int)px][(int)(py+step)] == 0){
-                    py+=step;
+                if(world[(int)pX][(int)(pY+stepXY)] == 0){
+                    pY+=stepXY;
                 }
                 break;
             case 'q':
-                pa+=stepa;
+                pA+=stepA;
                 break;
             case 'e':
-                pa-=stepa;
+                pA-=stepA;
                 break;
             case  '.':
                 loop = 0;
@@ -91,11 +91,11 @@ int main(int argc, char const *argv[])
                 screen[i][n] = 0;
             }
         }
-        for (int a = pa; a < pa + clix; a++){
+        for (int a = pA; a < pA + cliX; a++){
             float i = 0;
-            float x1 = px;
-            float y1 = py;
-            float rad = a*360/(double)clix*M_PI/180;
+            float x1 = pX;
+            float y1 = pY;
+            float rad = a*360/(double)cliX*M_PI/180;
             float y2 = 9.5+( sin(rad)*20);
             float x2 = 9.5+( cos(rad)*20);
 
@@ -106,7 +106,7 @@ int main(int argc, char const *argv[])
                 //printf("%d %d\n", x, y);
                 if (world[(int)x1][(int)y1] == 1){
                     screen[(int)x1][(int)y1] = 66;
-                    distance[a-pa] = i;
+                    distance[a-pA] = i;
                     break;
                 }
                 if (screen[(int)x1][(int)y1] < i){
@@ -136,8 +136,8 @@ int main(int argc, char const *argv[])
         //printf("\e[1;1H\e[2J");
         printf("\e[1;1H");
         /*
-        screen[(int)px][(int)py] = 65;
-        printf("%f, %f \n", px, py);
+        screen[(int)pX][(int)pY] = 65;
+        printf("%f, %f \n", pX, pY);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 //printf("%d ", screen[i][j]);
@@ -147,14 +147,14 @@ int main(int argc, char const *argv[])
         } 
         fputs("\n", stdout);
         
-        for (int j = clix-1; j >= 0; j--) {
+        for (int j = cliX-1; j >= 0; j--) {
             printf("%c", grey[65 - distance[j]]);
         }
         */
         fputs("\n", stdout);
-        for (int i = 0; i < cliy; i++) {
-            for (int j = clix-1; j >= 0; j--) {
-                if (cliy/2-(cliy-map(distance[j],0,20,0,cliy))/2 <= i && cliy/2+(cliy-map(distance[j],0,20,0,cliy))/2 >= i){
+        for (int i = 0; i < cliY; i++) {
+            for (int j = cliX-1; j >= 0; j--) {
+                if (cliY/2-(cliY-map(distance[j],0,20,0,cliY))/2 <= i && cliY/2+(cliY-map(distance[j],0,20,0,cliY))/2 >= i){
                     fputs("#", stdout);
                 }
                 else {
