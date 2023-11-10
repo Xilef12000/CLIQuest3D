@@ -40,6 +40,8 @@ int main(int argc, char const *argv[])
     int pa = 0;
     system ("/bin/stty raw");
     system ("/bin/stty -echo");
+    system ("tput civis");
+    printf("\e[1;1H\e[2J");
     int loop = 1;
     while(loop) {
         ioctl(0, FIONREAD, &bw);
@@ -116,8 +118,8 @@ int main(int argc, char const *argv[])
             }
         }
 
-
-        printf("\e[1;1H\e[2J");
+        //printf("\e[1;1H\e[2J");
+        printf("\e[1;1H");
 
         screen[px][py] = 65;
         printf("%d, %d \n", px, py);
@@ -126,25 +128,24 @@ int main(int argc, char const *argv[])
                 //printf("%d ", screen[i][j]);
                 printf("%c ", grey[screen[i][j]]);
             }
-            printf("\n");
+            fputs("\n", stdout);
         } 
-        printf("\n");
+        fputs("\n", stdout);
         
         for (int j = 89; j >= 0; j--) {
             printf("%c", grey[65 - distance[j]]);
         }
-        printf("\n");
-
+        fputs("\n", stdout);
         for (int i = 0; i < 20; i++) {
             for (int j = 89; j >= 0; j--) {
                 if (10-(20-distance[j])/2 <= i && 10+(20-distance[j])/2 >= i){
-                    printf("#");
+                    fputs("#", stdout);
                 }
                 else {
-                    printf(" ");
+                    fputs(" ", stdout);
                 }
             }
-            printf("\n");
+            fputs("\n", stdout);
         } 
         
         time_t time = clock() - lastt;
@@ -155,5 +156,6 @@ int main(int argc, char const *argv[])
     }
     system ("/bin/stty cooked");
     system ("/bin/stty echo");
+    system ("tput cnorm");
     return 0;
 }
