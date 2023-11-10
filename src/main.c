@@ -52,7 +52,8 @@ int main(int argc, char const *argv[])
     while(loop) {
         int inBuffer;
         ioctl(0, FIONREAD, &inBuffer);
-        if (inBuffer > 0){
+        while (inBuffer > 0){
+            inBuffer--;
             key=getchar();
             pRad = pA*M_PI/180;
             pNX = pX;
