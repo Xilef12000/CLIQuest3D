@@ -49,16 +49,24 @@ int main(int argc, char const *argv[])
             key=getchar();
             switch (key) {
             case 'w':
-                px--;
+                if(world[(int)(px-0.1)][(int)py] == 0){
+                    px-=0.1;
+                }
                 break;
             case 'a':
-                py--;
+                if(world[(int)px][(int)(py-0.1)] == 0){
+                    py-=0.1;
+                }
                 break;
             case 's':
-                px++;
+                if(world[(int)(px+0.1)][(int)py] == 0){
+                    px+=0.1;
+                }
                 break;
             case 'd':
-                py++;
+                if(world[(int)px][(int)(py+0.1)] == 0){
+                    py+=0.1;
+                }
                 break;
             case 'q':
                 pa+=15;
