@@ -40,7 +40,8 @@ int main(int argc, char const *argv[])
     int pa = 0;
     system ("/bin/stty raw");
     system ("/bin/stty -echo");
-    while(1) {
+    int loop = 1;
+    while(loop) {
         ioctl(0, FIONREAD, &bw);
         start = clock();
         if (bw > 0){
@@ -65,7 +66,7 @@ int main(int argc, char const *argv[])
                 pa-=15;
                 break;
             case  '.':
-                return 0;
+                loop = 0;
                 break;
             }
         }
