@@ -43,6 +43,7 @@ int main(int argc, char const *argv[])
     float pX = 9;
     float pY = 9;
     int pA = 0;
+    float pNX, pNY, pRad;
     system ("/bin/stty raw");
     system ("/bin/stty -echo");
     system ("tput civis");
@@ -53,26 +54,25 @@ int main(int argc, char const *argv[])
         ioctl(0, FIONREAD, &inBuffer);
         if (inBuffer > 0){
             key=getchar();
+            pRad = pA*M_PI/180;
+            pNX = pX;
+            pNY = pY;
             switch (key) {
             case 'w':
-                if(world[(int)(pX-stepXY)][(int)pY] == 0){
-                    pX-=stepXY;
-                }
+                pNX -= sin(pRad)*stepXY;
+                pNY -= cos(pRad)*stepXY;
                 break;
             case 'a':
-                if(world[(int)pX][(int)(pY-stepXY)] == 0){
-                    pY-=stepXY;
-                }
+                pNX -= cos(pRad)*stepXY;
+                pNY -= sin(pRad)*stepXY;
                 break;
             case 's':
-                if(world[(int)(pX+stepXY)][(int)pY] == 0){
-                    pX+=stepXY;
-                }
+                pNX += sin(pRad)*stepXY;
+                pNY += cos(pRad)*stepXY;
                 break;
             case 'd':
-                if(world[(int)pX][(int)(pY+stepXY)] == 0){
-                    pY+=stepXY;
-                }
+                pNX += cos(pRad)*stepXY;
+                pNY += sin(pRad)*stepXY;
                 break;
             case 'q':
                 pA+=stepA;
@@ -83,6 +83,12 @@ int main(int argc, char const *argv[])
             case  '.':
                 loop = 0;
                 break;
+            }
+            if(world[(int)(pNX)][(int)pY] == 0){
+                pX = pNX;
+            }
+            if(world[(int)(pX)][(int)pNY] == 0){
+                pY = pNY;
             }
         }
         system ("/bin/stty cooked");
@@ -95,9 +101,9 @@ int main(int argc, char const *argv[])
             float i = 0;
             float x1 = pX;
             float y1 = pY;
-            float rad = a*360/(double)cliX*M_PI/180;
-            float y2 = 9.5+( sin(rad)*20);
-            float x2 = 9.5+( cos(rad)*20);
+            float srad = a*360/(double)cliX*M_PI/180;
+            float y2 = 9.5+( sin(srad)*20);
+            float x2 = 9.5+( cos(srad)*20);
 
             float dx =  fabs(x2 - x1), sx = x1<x2 ? 1 : -1;
             float dy = -fabs(y2 - y1), sy = y1<y2 ? 1 : -1;
@@ -135,9 +141,9 @@ int main(int argc, char const *argv[])
 
         //printf("\e[1;1H\e[2J");
         printf("\e[1;1H");
+        printf("X:%6.3f/Y:%6.3f/% 4d° \n", pX, pY, pA);
         /*
         screen[(int)pX][(int)pY] = 65;
-        printf("%f, %f \n", pX, pY);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 //printf("%d ", screen[i][j]);
