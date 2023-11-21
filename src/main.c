@@ -160,13 +160,40 @@ int main(int argc, char const *argv[])
             for (int j = cliX-1; j >= 0; j--) {
                 if (cliY/2-(cliY-map(distance[j],0,20,0,cliY))/2 <= i && cliY/2+(cliY-map(distance[j],0,20,0,cliY))/2 >= i){
                     if (distance[j] < 5){
+                        fputs("\u2588", stdout);
+                    }
+                    else
+                    if (distance[j] < 10){
                         fputs("\u2593", stdout);
                     }
-                    else if (distance[j] < 12){
+                    else if (distance[j] < 15){
                         fputs("\u2592", stdout);
                     }
                     else {
                         fputs("\u2591", stdout);
+                    }
+                }
+                else if (cliY/2-(cliY-map(distance[j],0,20,0,cliY))/2 <= i){
+                    if (i < cliY/2/7*1){
+                        fputs("\u2581", stdout);
+                    }
+                    else if (i < cliY/2+cliY/2/7*2){
+                        fputs("\u2582", stdout);
+                    }
+                    else if (i < cliY/2+cliY/2/7*3){
+                        fputs("\u2583", stdout);
+                    }
+                    else if (i < cliY/2+cliY/2/7*4){
+                        fputs("\u2584", stdout);
+                    }
+                    else if (i < cliY/2+cliY/2/7*5){
+                        fputs("\u2585", stdout);
+                    }
+                    else if (i < cliY/2+cliY/2/7*6){
+                        fputs("\u2586", stdout);
+                    }
+                    else {
+                        fputs("\u2587", stdout);
                     }
                 }
                 else {
