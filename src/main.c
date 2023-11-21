@@ -69,21 +69,13 @@ int main(int argc, char const *argv[])
                 pNY -= cos(pRad)*stepXY;
                 break;
             case 'a':
-                pNX -= cos(pRad)*stepXY;
-                pNY -= sin(pRad)*stepXY;
+                pA+=stepA;
                 break;
             case 's':
                 pNX += sin(pRad)*stepXY;
                 pNY += cos(pRad)*stepXY;
                 break;
             case 'd':
-                pNX += cos(pRad)*stepXY;
-                pNY += sin(pRad)*stepXY;
-                break;
-            case 'q':
-                pA+=stepA;
-                break;
-            case 'e':
                 pA-=stepA;
                 break;
             case  '.':
