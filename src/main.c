@@ -159,7 +159,15 @@ int main(int argc, char const *argv[])
         for (int i = 0; i < cliY; i++) {
             for (int j = cliX-1; j >= 0; j--) {
                 if (cliY/2-(cliY-map(distance[j],0,20,0,cliY))/2 <= i && cliY/2+(cliY-map(distance[j],0,20,0,cliY))/2 >= i){
-                    fputs("#", stdout);
+                    if (distance[j] < 5){
+                        fputs("\u2593", stdout);
+                    }
+                    else if (distance[j] < 12){
+                        fputs("\u2592", stdout);
+                    }
+                    else {
+                        fputs("\u2591", stdout);
+                    }
                 }
                 else {
                     fputs(" ", stdout);
