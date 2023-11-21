@@ -38,6 +38,11 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
 }
 int main(int argc, char const *argv[])
 {   
+    struct winsize w;
+    ioctl(0, TIOCGWINSZ, &w);
+    cliY = w.ws_row - 4;
+    cliX = w.ws_col - 4;
+
     clock_t lastt = clock();
     int key;
     float pX = 9;
