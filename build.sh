@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "\e[1;36mcompiling... \e[0m"
+mkdir build
 gcc src/main.c -o build/CLIQuest3D.out -lm
 excode=$?
 if [ $excode -ne 0 ]
