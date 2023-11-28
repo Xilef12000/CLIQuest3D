@@ -14,3 +14,7 @@ to compile and start run:
 ```bash
 sh build.sh
 ```
+
+## notes:
+- it is very important that the shell used can handle a high throughput (I had no problems with the `GNOME Shell`)
+
