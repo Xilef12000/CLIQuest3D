@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>
 
 const int world[20][20] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -43,7 +44,10 @@ int main(int argc, char const *argv[])
     cliY = w.ws_row - 4;
     cliX = w.ws_col - 4;
 
-    clock_t lastt = clock();
+    struct timeval tNow, tLast;
+    gettimeofday(&tLast, NULL);
+    unsigned long tTaken, frame = 0;
+
     int key;
     float pX = 9;
     float pY = 9;
@@ -202,10 +206,13 @@ int main(int argc, char const *argv[])
             }
             fputs("\r\n", stdout);
         } 
-        
-        time_t time = clock() - lastt;
-        printf("time: %.3f ms; fps: %.0f \r\n", (((double) time) / CLOCKS_PER_SEC)*1000, 1.0/(((double) time) / CLOCKS_PER_SEC));
-        lastt = clock();
+
+        gettimeofday(&tNow, NULL);
+        tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
+        printf("time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
+        //printf("time: %.3lf ms; fps %.0lf\r\n", tTaken * 1000, 1.0 / tTaken);
+        tLast = tNow;
+        frame++;
     }
     system ("/bin/stty sane");
     system ("tput cnorm");
