@@ -4,6 +4,7 @@
 #include <time.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#include "framebuffer.h"
 
 const int world[20][20] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -39,10 +40,26 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
 }
 int main(int argc, char const *argv[]) {   
     // get window size in characters
+    struct buffer fb;
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
-    cliY = w.ws_row - 4;
-    cliX = w.ws_col - 4;
+    cliX = fb.sY = w.ws_row - 4;
+    cliY = fb.sX = w.ws_col - 4;
+    fb.bP = malloc(sizeof(unsigned short)*fb.sX*fb.sY);
+    fb.cur = malloc(sizeof(fb.cur));
+    for (int i = 0; i < fb.sX*fb.sY; i++){
+        fb.bP[i] = 32;
+    }
+    putB('P', fb);
+    putB('1', fb);
+    putB('\n', fb);
+    putB('2', fb);
+    putB(11003, fb);
+    putB('3', fb);
+    printB("test", fb);
+    displayB(fb);
+    return 0;
+
     // variables for time stats
     struct timeval tNow, tLast;
     gettimeofday(&tLast, NULL);
