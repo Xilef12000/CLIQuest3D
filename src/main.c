@@ -43,8 +43,10 @@ int main(int argc, char const *argv[]) {
     struct buffer fb;
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
-    cliY = fb.sY = w.ws_row - 4;
-    cliX = fb.sX = w.ws_col - 4;
+    fb.sY = w.ws_row - 1;
+    fb.sX = w.ws_col - 1;
+    cliY = fb.sY - 4;
+    cliX = fb.sX - 4;
     // setup buffer
     fb.bP = malloc(sizeof(unsigned short)*fb.sX*fb.sY);
     fb.cur = malloc(sizeof(fb.cur));
@@ -189,7 +191,7 @@ int main(int argc, char const *argv[]) {
                    putB(' ', fb); // empty pixel
                 }
             }
-            //putB('\n', fb);
+            putB('\n', fb);
             //fputs("\r\n", stdout); // cursor to new line after end of horizontal line 
         } 
         displayB(fb); // write buffer to cli
