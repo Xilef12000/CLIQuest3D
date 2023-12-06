@@ -43,23 +43,14 @@ int main(int argc, char const *argv[]) {
     struct buffer fb;
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
-    cliX = fb.sY = w.ws_row - 4;
-    cliY = fb.sX = w.ws_col - 4;
+    cliY = fb.sY = w.ws_row - 4;
+    cliX = fb.sX = w.ws_col - 4;
+    // setup buffer
     fb.bP = malloc(sizeof(unsigned short)*fb.sX*fb.sY);
     fb.cur = malloc(sizeof(fb.cur));
     for (int i = 0; i < fb.sX*fb.sY; i++){
         fb.bP[i] = 32;
     }
-    putB('P', fb);
-    putB('1', fb);
-    putB('\n', fb);
-    putB('2', fb);
-    putB(11003, fb);
-    putB('3', fb);
-    printB("test", fb);
-    displayB(fb);
-    return 0;
-
     // variables for time stats
     struct timeval tNow, tLast;
     gettimeofday(&tLast, NULL);
@@ -149,63 +140,64 @@ int main(int argc, char const *argv[]) {
                 }   
             }
         }
-        printf("\e[1;1H"); // cursor to top left
-        printf("X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); // print player coordinates and rotation
-        fputs("\r\n", stdout);
+        //printf("X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); // print player coordinates and rotation
+        //fputs("\r\n", stdout);
         for (int i = 0; i < cliY; i++) { //for every horizontal line of output image
             for (int j = cliX-1; j >= 0; j--) { // for every pixel in horizontal line
                 if (cliY/2-(cliY-map(distance[j],0,20,0,cliY))/2 <= i) { // if pixel is not ceiling -> wall or floor
                     if (cliY/2+(cliY-map(distance[j],0,20,0,cliY))/2 >= i) { // if pixel is not floor -> wall
                         // draw gray shade depending on distance of wall to player
                         if (distance[j] < 5){
-                            fputs("\u2588", stdout);
+                           putB(11000, fb);
                         }
                         else if (distance[j] < 10){
-                            fputs("\u2593", stdout);
+                           putB(11001, fb);
                         }
                         else if (distance[j] < 15){
-                            fputs("\u2592", stdout);
+                           putB(11002, fb);
                         }
                         else {
-                            fputs("\u2591", stdout);
+                           putB(11003, fb);
                         }
                     }
                     else { // -> pixel is floor
                         //  draw gray shade depending on distance of floor to player
                         if (i < cliY/2/7*1){
-                            fputs("\u2581", stdout);
+                           putB(12000, fb);
                         }
                         else if (i < cliY/2+cliY/2/7*2){
-                            fputs("\u2582", stdout);
+                           putB(12001, fb);
                         }
                         else if (i < cliY/2+cliY/2/7*3){
-                            fputs("\u2583", stdout);
+                           putB(12002, fb);
                         }
                         else if (i < cliY/2+cliY/2/7*4){
-                            fputs("\u2584", stdout);
+                           putB(12003, fb);
                         }
                         else if (i < cliY/2+cliY/2/7*5){
-                            fputs("\u2585", stdout);
+                           putB(12004, fb);
                         }
                         else if (i < cliY/2+cliY/2/7*6){
-                            fputs("\u2586", stdout);
+                           putB(12005, fb);
                         }
                         else {
-                            fputs("\u2587", stdout);
+                           putB(12006, fb);
                         }
                     }
                 }
                 else { // -> pixel is ceiling
-                    fputs(" ", stdout); // empty pixel
+                   putB(' ', fb); // empty pixel
                 }
             }
-            fputs("\r\n", stdout); // cursor to new line after end of horizontal line 
+            //putB('\n', fb);
+            //fputs("\r\n", stdout); // cursor to new line after end of horizontal line 
         } 
+        displayB(fb); // write buffer to cli
 
         // calculate and output time stats
         gettimeofday(&tNow, NULL);
         tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
-        printf("time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
+        //printf("time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
         tLast = tNow;
         frame++;
     }

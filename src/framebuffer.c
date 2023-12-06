@@ -45,6 +45,9 @@ int placeB(unsigned short c, int x, int y, struct buffer fb){
         fb.bP[*fb.cur] = ' ';
     }
     (*fb.cur)++;
+    if ((*fb.cur) >= fb.sX*fb.sY){
+        (*fb.cur) = fb.sX*fb.sY-1;
+    }
     return 0;
 };
 
@@ -60,6 +63,7 @@ int printB(char s[], struct buffer fb){
 };
 
 int displayB(struct buffer fb){
+    printf("\e[1;1H"); // cursor to top left
     for (int i = 0; i < fb.sY; i++){
         for (int n = 0; n < fb.sX; n++){
             unsigned short c = fb.bP[fb.sX*i+n];
@@ -75,7 +79,8 @@ int displayB(struct buffer fb){
                 }
             }
         }
-        putc('\n', stdout);
+        fputs("\r\n", stdout);
     }
+    (*fb.cur) = 0;
     return 0;
 };
