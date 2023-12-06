@@ -142,8 +142,8 @@ int main(int argc, char const *argv[]) {
                 }   
             }
         }
-        //printf("X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); // print player coordinates and rotation
-        //fputs("\r\n", stdout);
+        fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); // print player coordinates and rotation
+        setBCur(1, 0, fb);
         for (int i = 0; i < cliY; i++) { //for every horizontal line of output image
             for (int j = cliX-1; j >= 0; j--) { // for every pixel in horizontal line
                 if (cliY/2-(cliY-map(distance[j],0,20,0,cliY))/2 <= i) { // if pixel is not ceiling -> wall or floor
@@ -191,17 +191,17 @@ int main(int argc, char const *argv[]) {
                    putB(' ', fb); // empty pixel
                 }
             }
-            putB('\n', fb);
-            //fputs("\r\n", stdout); // cursor to new line after end of horizontal line 
+            putB('\n', fb); // cursor to new line after end of horizontal line 
         } 
-        displayB(fb); // write buffer to cli
 
         // calculate and output time stats
         gettimeofday(&tNow, NULL);
         tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
-        //printf("time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
+        fprintB(fb, "\ntime: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
         tLast = tNow;
         frame++;
+
+        displayB(fb); // write buffer to cli
     }
     system ("/bin/stty sane"); // reset shell flags to default
     system ("tput cnorm"); // show cursor in shell
