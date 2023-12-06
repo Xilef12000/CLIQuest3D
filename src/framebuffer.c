@@ -1,8 +1,7 @@
-
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 struct buffer {
     unsigned short sX;
@@ -74,6 +73,19 @@ int printB(char s[], struct buffer fb){
         n += putB(s[i], fb);
     }
     return n;
+};
+int fprintB(struct buffer fb, const char *format, ...){
+    va_list args0;
+    va_start(args0, format);
+    int n = vsnprintf(NULL, 0, format, args0);
+    va_end(args0);
+    char str[n+1];
+    va_list args1;
+    va_start(args1, format);
+    vsprintf(str, format, args1);
+    va_end(args1);
+    printB(str, fb);
+    return(0);
 };
 int displayB(struct buffer fb){
     printf("\e[1;1H"); // cursor to top left
