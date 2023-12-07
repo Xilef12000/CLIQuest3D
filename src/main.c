@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <sys/ioctl.h>
+#include "crossplatform.h"
 #include <sys/time.h>
 #include "framebuffer.h"
 
@@ -38,19 +38,24 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     // mapping function of one int in range to int in other range
     return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
-int main(int argc, char const *argv[]) {   
-    // get window size in characters
+int main(int argc, char const *argv[]) { 
+    // output character dictionary  
+    #define CODESLEN 11
+    struct dict *codes;
+    codes = malloc(sizeof(struct dict)*CODESLEN);
+    setCodes(codes, CODESLEN);
+    // init buffer
     struct buffer fb;
-    struct winsize w;
-    ioctl(0, TIOCGWINSZ, &w);
-    fb.sY = w.ws_row - 1;
-    fb.sX = w.ws_col - 1;
-    cliY = fb.sY - 4;
-    cliX = fb.sX - 4;
-    // setup buffer
-    fb.bP = malloc(sizeof(unsigned short)*fb.sX*fb.sY);
+    fb.sY = malloc(sizeof(unsigned short));
+    fb.sX = malloc(sizeof(unsigned short));
+    // get window size in characters
+    getCliDim(fb);
+    cliY = (*fb.sY) - 4;
+    cliX = (*fb.sX) - 4;
+    // clear buffer
+    fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));
     fb.cur = malloc(sizeof(fb.cur));
-    for (int i = 0; i < fb.sX*fb.sY; i++){
+    for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
         fb.bP[i] = 32;
     }
     // variables for time stats
@@ -62,18 +67,13 @@ int main(int argc, char const *argv[]) {
     float pY = 9; // player position Y
     int pA = 0; // player rotation in degree (view direction - 180)
     float pNX, pNY, pRad; // new theoretical player position x y and rotation in radians
-    // set shell flags
-    system ("/bin/stty raw"); // canonical mode -> direct input/output
-    system ("/bin/stty -echo"); // no echo of user input
-    system ("tput civis"); // hide blinking cursor
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
     int loop = 1; // loop until exit
     while(loop) {
-        int inBuffer;
-        ioctl(0, FIONREAD, &inBuffer); // how many characters in input buffer
+        int inBuffer = getKeysInBuffer(); // how many characters in input buffer
         while (inBuffer > 0) {
             inBuffer--; // for every character in input buffer
-            key=getchar(); // get character
+            key=getKey(); // get character
             pRad = pA*M_PI/180; // degree to radians
             pNX = pX; // theoretical new position = current position
             pNY = pY;
@@ -201,9 +201,7 @@ int main(int argc, char const *argv[]) {
         tLast = tNow;
         frame++;
 
-        displayB(fb); // write buffer to cli
+        displayB(fb, codes, CODESLEN); // write buffer to cli
     }
-    system ("/bin/stty sane"); // reset shell flags to default
-    system ("tput cnorm"); // show cursor in shell
     return 0;
 }

@@ -9,8 +9,13 @@ then
 else
   echo "\e[1;32mfinished compiling \e[0m"
   echo "\e[1;36mstarting... \e[0m"
+  /bin/stty raw
+  /bin/stty -echo
+  tput civis
   ./build/CLIQuest3D.out
   excode=$?
+  /bin/stty sane
+  tput cnorm
   if [ $excode -eq 0 ]
   then
     echo "\e[1;32mprogram exited successful with exit code $excode\e[0m"
