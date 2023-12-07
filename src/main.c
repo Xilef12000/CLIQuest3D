@@ -1,10 +1,11 @@
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include "crossplatform.h"
 #include <sys/time.h>
 #include "framebuffer.h"
+#include <math.h>
+
 
 const int world[20][20] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
