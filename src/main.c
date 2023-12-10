@@ -221,7 +221,7 @@ int main(int argc, char const *argv[]) {
             }
             putB('\n', fb);
         }
-        setBCur(pY*2, pX+1, fb);
+        setBCur(pX*2, pY+1, fb);
         putB('X', fb);
 
         // calculate and output time stats
