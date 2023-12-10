@@ -194,10 +194,27 @@ int main(int argc, char const *argv[]) {
             putB('\n', fb); // cursor to new line after end of horizontal line 
         } 
 
+        setBCur(0, 1, fb);
+        for (int i = 0; i < 20; i++){
+            for (int j = 0; j < 20; j++){
+                if (world[i][j] == 1) {
+                    putB('#', fb);
+                }
+                else {
+                    putB(' ', fb);
+                }
+                putB(' ', fb);
+            }
+            putB('\n', fb);
+        }
+        setBCur(pY*2, pX+1, fb);
+        putB('X', fb);
+
         // calculate and output time stats
         gettimeofday(&tNow, NULL);
         tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
-        fprintB(fb, "\ntime: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
+        setBCur(0, cliY+2, fb);
+        fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
         tLast = tNow;
         frame++;
 
