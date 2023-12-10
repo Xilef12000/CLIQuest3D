@@ -143,7 +143,7 @@ int main(int argc, char const *argv[]) {
             }
         }
         fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); // print player coordinates and rotation
-        setBCur(1, 0, fb);
+        setBCur(0, 1, fb);
         for (int i = 0; i < cliY; i++) { //for every horizontal line of output image
             for (int j = cliX-1; j >= 0; j--) { // for every pixel in horizontal line
                 if (cliY/2-(cliY-map(distance[j],0,20,0,cliY))/2 <= i) { // if pixel is not ceiling -> wall or floor
