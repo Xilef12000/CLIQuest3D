@@ -222,7 +222,33 @@ int main(int argc, char const *argv[]) {
             putB('\n', fb);
         }
         setBCur(pX*2, pY+1, fb);
-        putB('X', fb);
+        switch (map(((((int)(pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
+            case 0:
+                putB(13000, fb);
+                break;
+            case 1:
+                putB(13001, fb);
+                break;
+            case 2:
+                putB(13002, fb);
+                break;
+            case 3:
+                putB(13003, fb);
+                break;
+            case 4:
+                putB(13004, fb);
+                break;
+            case 5:
+                putB(13005, fb);
+                break;
+            case 6:
+                putB(13006, fb);
+                break;
+            case 7:
+                putB(13007, fb);
+                break;
+        }
+        
 
         // calculate and output time stats
         gettimeofday(&tNow, NULL);
