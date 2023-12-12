@@ -22,7 +22,7 @@ int checkBCur(struct buffer fb){
     return 0;
 };
 int setBCur(int x, int y, struct buffer fb){
-    *fb.cur = (*fb.sX)*x+y;
+    *fb.cur = (*fb.sX)*y+x;
     checkBCur(fb);
     return 0;
 };
