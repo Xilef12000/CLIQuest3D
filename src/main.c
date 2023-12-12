@@ -50,7 +50,7 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
 }
 int main(int argc, char const *argv[]) { 
     // output character dictionary  
-    #define CODESLEN 11
+    #define CODESLEN UNILEN
     struct dict *codes;
     codes = malloc(sizeof(struct dict)*CODESLEN);
     setCodes(codes, CODESLEN);

@@ -23,12 +23,13 @@ char getKey() {
 }
 
 int setCodes(struct dict *codes, unsigned short codesLen) {
-    #define UNILEN 11
+    #define UNILEN 12
     struct dict uni[UNILEN] = {
         {11000, "\u2588"},
         {11001, "\u2593"},
         {11002, "\u2592"},
         {11003, "\u2591"},
+        {11004, " "},
         {12000, "\u2581"},
         {12001, "\u2582"},
         {12002, "\u2583"},
