@@ -36,7 +36,6 @@ const float spY = 10;
 const int spA = 180;
 const short fov = 90; //set field of view to 90 degree
 const short maxVDist = 20; //set max viewing distran
-int distance[90] = {}; // viewing distance
 const float stepXY = 0.5; // player step size
 const int stepA = 5;  // player rotation steps
 int cliX = 144; // default fallback windows size
@@ -69,6 +68,9 @@ int main(int argc, char const *argv[]) {
     for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
         fb.bP[i] = 32;
     }
+    // setup array for distance to wall for each vertical display line
+    unsigned short *distance;
+    distance = malloc(sizeof(unsigned short)*cliX);
     // variables for time stats
     struct timeval tNow, tLast;
     gettimeofday(&tLast, NULL);
