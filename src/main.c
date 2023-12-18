@@ -37,7 +37,7 @@ const short fov = 90; //set field of view to 90 degree
 const short maxVDist = 20; //set max viewing distran
 const float stepXY = 0.5; // player step size
 const int stepA = 5;  // player rotation steps
-int cliX = 144; // default fallback windows size
+int cliX = 144; // default fallback windows size 
 int cliY = 48;
 int map(int x, int inMin, int inMax, int outMin, int outMax) {
     // mapping function of one int in range to int in other range
@@ -74,6 +74,7 @@ int main(int argc, char const *argv[]) {
     float pY = spY; // player position Y
     int pA = spA; // player rotation in degree (180 = north)
     float pNX, pNY, pRad; // new theoretical player position x y and rotation in radians
+    unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
     // set shell flags
     system ("/bin/stty raw"); // canonical mode -> direct input/output
     system ("/bin/stty -echo"); // no echo of user input
@@ -209,21 +210,48 @@ int main(int argc, char const *argv[]) {
             }
             putB('\n', fb); // cursor to new line after end of horizontal line 
         } 
-
-        setBCur(0, 1, fb);
-        for (int i = 0; i < 20; i++){
-            for (int j = 0; j < 20; j++){
+        // draw map
+        setBCur(0, 1, fb); //reset cursor to top left corner
+        short mY1 = pY-(float)mapS/2;
+        mY1 = mY1 > 0 ? mY1 : 0;
+        short mY2 = mY1 == 0 ? mY1+mapS : pY+(float)mapS/2;
+        mY2 = mY2 < WORLDSIZE ? mY2 : WORLDSIZE;
+        mY1 = mY2 != WORLDSIZE ? mY1 : mY2-mapS;
+        short mX1 = pX-(float)mapS/2;
+        mX1 = mX1 > 0 ? mX1 : 0;
+        short mX2 = mX1 == 0 ? mX1+mapS : pX+(float)mapS/2;
+        mX2 = mX2 < WORLDSIZE ? mX2 : WORLDSIZE;
+        mX1 = mX2 != WORLDSIZE ? mX1 : mX2-mapS;
+        for (int i = 0; i < mapS+1; i++) {
+            putB('+', fb);
+            if (i != mapS) {
+                putB(' ', fb);
+            }
+        };
+        putB('\n', fb);
+        for (int i = mY1; i < mY2; i++){
+            putB('+', fb);
+            for (int j = mX1; j < mX2; j++){
+                if (j != mX1) {
+                    putB(' ', fb);
+                }
                 if (world[i][j] == 1) {
                     putB('#', fb);
                 }
                 else {
                     putB(' ', fb);
                 }
-                putB(' ', fb);
             }
+            putB('+', fb);
             putB('\n', fb);
         }
-        setBCur(pX*2, pY+1, fb);
+        for (int i = 0; i < mapS+1; i++) {
+            putB('+', fb);
+            if (i != mapS) {
+                putB(' ', fb);
+            }
+        };
+        setBCur((int)pX*2-mX1*2, pY-mY1+2, fb);
         switch (map(((((int)(pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
             case 0:
                 putB(13000, fb);
