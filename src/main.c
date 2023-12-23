@@ -58,9 +58,10 @@ int main(int argc, char const *argv[]) {
     fb.sY = malloc(sizeof(unsigned short));
     fb.sX = malloc(sizeof(unsigned short));
     // get window size in characters
-    getCliDim(fb);
-    cliY = (*fb.sY) - 4;
-    cliX = (*fb.sX) - 4;
+    if (getCliDim(fb)){
+        cliY = (*fb.sY) - 4;
+        cliX = (*fb.sX) - 4;
+    }
     double cliA = fov / (double) cliX;
     // clear buffer
     fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));

@@ -1,8 +1,25 @@
 #include "crossplatform.h"
 #include "framebuffer.h"
+#include <windows.h>
+#include <stdio.h>
+
+HANDLE hStdout;
+
 
 int getCliDim(struct buffer fb) {
     // get window size in characters
+    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+    SMALL_RECT srctWindow;
+
+    // Get the current screen buffer size and window position.
+    GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
+
+    // Set srctWindow to the current window size and location.
+    srctWindow = csbiInfo.srWindow;
+
+    (*fb.sX) = srctWindow.Right - srctWindow.Left;
+    (*fb.sY) = srctWindow.Bottom - srctWindow.Top;
 
     return 0;
 }
