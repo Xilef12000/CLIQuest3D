@@ -5,6 +5,7 @@
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include "framebuffer.h"
+#include "menu.h"
 
 #define WORLDSIZE 20
 const int world[WORLDSIZE][WORLDSIZE] = {
@@ -47,6 +48,8 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     return n;
 }
 int main(int argc, char const *argv[]) {   
+    // menu
+    unsigned short isMenu = 1;
     // get window size in characters
     struct buffer fb;
     struct winsize w;
@@ -86,6 +89,7 @@ int main(int argc, char const *argv[]) {
         while (inBuffer > 0) {
             inBuffer--; // for every character in input buffer
             key=getchar(); // get character
+            if (!isMenu){
             pRad = pA*M_PI/180; // degree to radians
             pNX = pX; // theoretical new position = current position
             pNY = pY;
@@ -106,8 +110,19 @@ int main(int argc, char const *argv[]) {
                     pA-=stepA;
                     break;
                 case  '.':
+                    isMenu = 1;
+                    break;
+            }
+            }
+            else {
+                switch (key) {
+                case  '.':
                     loop = 0;
                     break;
+                case ' ':
+                    isMenu = 0;
+                    break;
+                }
             }
             // check if theoretical new position is not in wall -> write it to current position
             if(world[(int)(pY)][(int)pNX] == 0) {
@@ -117,6 +132,7 @@ int main(int argc, char const *argv[]) {
                 pY = pNY;
             }
         }
+        if (!isMenu){
         // ray casting:
         // draw lines from player in every direction in view
         // lines can only be draws between between to points
@@ -216,6 +232,17 @@ int main(int argc, char const *argv[]) {
         fprintB(fb, "\ntime: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
         tLast = tNow;
         frame++;
+        }
+        else {
+            clearB(fb);
+            setBCur(0, 3, fb);
+            for (int i = 0; i < 8; i++) {
+                printB((char*)logo[i], fb);
+                putB('\n', fb);
+            }
+            printB("\n\n Press SPACE to start game", fb);
+            printB("\n\n or . to exit game.", fb);
+        }
 
         displayB(fb); // write buffer to cli
     }
