@@ -75,6 +75,13 @@ int printB(char s[], struct buffer fb){
     }
     return n;
 };
+int clearB(struct buffer fb){
+    setBCur(0, 0, fb);
+    for (int i = 0; i < fb.sX*fb.sY; i++) {
+        putB(' ', fb);
+    }
+    return 0;
+};
 int fprintB(struct buffer fb, const char *format, ...){
     va_list args0;
     va_start(args0, format);
