@@ -8,6 +8,7 @@
 #include <math.h>
 
 int map(int x, int inMin, int inMax, int outMin, int outMax);
+void kb_control();
 
 #define WORLDSIZE 20
 struct level {
@@ -46,6 +47,7 @@ struct level lvl = { // current level lvl
 
 // menu
 unsigned short isMenu = 1;
+int loop = 1; // loop until exit
 
 // setup array for distance to wall for each vertical display line
 unsigned short *distance;
@@ -99,54 +101,9 @@ int main(int argc, char const *argv[]) {
     pA = lvl.spA; // player rotation in degree (180 = north)
 
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
-    int loop = 1; // loop until exit
+
     while(loop) {
-        while(getKeysInBuffer()) //inBuffer > 0
-        {
-            key = getKey(); // get character
-            if (!isMenu){
-            pRad = pA*M_PI/180; // degree to radians
-            pNX = pX; // theoretical new position = current position
-            pNY = pY;
-            switch (key) {
-                // rotate or walk according to key press, exit if '.'
-                case 'w':
-                    pNX += sin(pRad)*stepXY;
-                    pNY += cos(pRad)*stepXY;
-                    break;
-                case 'a':
-                    pA+=stepA;
-                    break;
-                case 's':
-                    pNX -= sin(pRad)*stepXY;
-                    pNY -= cos(pRad)*stepXY;
-                    break;
-                case 'd':
-                    pA-=stepA;
-                    break;
-                case  '.':
-                    isMenu = 1;
-                    break;
-            }
-            }
-            else {
-                switch (key) {
-                case '.':
-                    loop = 0;
-                    break;
-                case ' ':
-                    isMenu = 0;
-                    break;
-                }
-            }
-            // check if theoretical new position is not in wall -> write it to current position
-            if(lvl.world[(int)(pY)][(int)pNX] == 0) {
-                pX = pNX;
-            }
-            if(lvl.world[(int)(pNY)][(int)pX] == 0) {
-                pY = pNY;
-            }
-        }
+        while(getKeysInBuffer()) kb_control(); // inBuffer > 0
         if (!isMenu){
         // ray casting:
         // draw lines from player in every direction in view
@@ -345,4 +302,51 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     if (n > outMax) n = outMax;
     if (n < outMin) n = outMin;
     return n;
+}
+
+void kb_control()
+{
+    key = getKey(); // get character
+    if (!isMenu){
+    pRad = pA*M_PI/180; // degree to radians
+    pNX = pX; // theoretical new position = current position
+    pNY = pY;
+    switch (key) {
+        // rotate or walk according to key press, exit if '.'
+        case 'w':
+            pNX += sin(pRad)*stepXY;
+            pNY += cos(pRad)*stepXY;
+            break;
+        case 'a':
+            pA+=stepA;
+            break;
+        case 's':
+            pNX -= sin(pRad)*stepXY;
+            pNY -= cos(pRad)*stepXY;
+            break;
+        case 'd':
+            pA-=stepA;
+            break;
+        case  '.':
+            isMenu = 1;
+            break;
+    }
+    }
+    else {
+        switch (key) {
+        case '.':
+            loop = 0;
+            break;
+        case ' ':
+            isMenu = 0;
+            break;
+        }
+    }
+    // check if theoretical new position is not in wall -> write it to current position
+    if(lvl.world[(int)(pY)][(int)pNX] == 0) {
+        pX = pNX;
+    }
+    if(lvl.world[(int)(pNY)][(int)pX] == 0) {
+        pY = pNY;
+    }
 }
