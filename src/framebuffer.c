@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include "crossplatform.h"
 
 struct buffer {
-    unsigned short sX;
-    unsigned short sY;
+    unsigned short *sX;
+    unsigned short *sY;
     unsigned long *cur;
     unsigned short *bP;
 };
@@ -14,38 +15,14 @@ struct dict {
     char *s;
 };
 
-#define uniLen 20
-struct dict uni[uniLen] = {
-    {11000, "\u2588"},
-    {11001, "\u2593"},
-    {11002, "\u2592"},
-    {11003, "\u2591"},
-    {11004, " "},
-    {12000, "\u2581"},
-    {12001, "\u2582"},
-    {12002, "\u2583"},
-    {12003, "\u2584"},
-    {12004, "\u2585"},
-    {12005, "\u2586"},
-    {12006, "\u2587"},
-    {13000, "\u2191"},
-    {13001, "\u2196"},
-    {13002, "\u2190"},
-    {13003, "\u2199"},
-    {13004, "\u2193"},
-    {13005, "\u2198"},
-    {13006, "\u2192"},
-    {13007, "\u2197"},
-};
-
 int checkBCur(struct buffer fb){
-    if ((*fb.cur) >= fb.sX*fb.sY){
-        (*fb.cur) = fb.sX*fb.sY-1;
+    if ((*fb.cur) >= (*fb.sX)*(*fb.sY)){
+        (*fb.cur) = (*fb.sX)*(*fb.sY)-1;
     }
     return 0;
 };
 int setBCur(int x, int y, struct buffer fb){
-    *fb.cur = fb.sX*y+x;
+    *fb.cur = (*fb.sX)*y+x;
     checkBCur(fb);
     return 0;
 };
@@ -62,14 +39,14 @@ int placeB(unsigned short c, int x, int y, struct buffer fb){
         fb.bP[*fb.cur] = c;
     }
     else if(c == 10) { //new line
-        moveBCur(fb.sX - ((*fb.cur) % (unsigned long) fb.sX) - 1, fb);
+        moveBCur((*fb.sX) - ((*fb.cur) % (unsigned long) (*fb.sX)) - 1, fb);
     }
     else {
         fb.bP[*fb.cur] = ' ';
     }
     moveBCur(1, fb);
-    if ((*fb.cur) >= fb.sX*fb.sY){
-        setBCur(fb.sX, fb.sY, fb);
+    if ((*fb.cur) >= (*fb.sX)*(*fb.sY)){
+        setBCur((*fb.sX), (*fb.sY), fb);
     }
     return 0;
 };
@@ -96,18 +73,18 @@ int fprintB(struct buffer fb, const char *format, ...){
     printB(str, fb);
     return(0);
 };
-int displayB(struct buffer fb){
+int displayB(struct buffer fb, struct dict *codes, unsigned short codesLen){
     printf("\e[1;1H"); // cursor to top left
-    for (int i = 0; i < fb.sY; i++){
-        for (int n = 0; n < fb.sX; n++){
-            unsigned short c = fb.bP[fb.sX*i+n];
+    for (int i = 0; i < (*fb.sY); i++){
+        for (int n = 0; n < (*fb.sX); n++){
+            unsigned short c = fb.bP[(*fb.sX)*i+n];
             if (32 <= c && c <= 126) { 
                 putc(c, stdout);
             }
             else if (10000 <= c && c <= 20000) { 
-                for (int m = 0; m < uniLen; m++){
-                    if (uni[m].i == c){
-                        printf("%s", uni[m].s);
+                for (int m = 0; m < codesLen; m++){
+                    if (codes[m].i == c){
+                        printf("%s", codes[m].s);
                         break;
                     }
                 }
