@@ -4,6 +4,7 @@
 #include "crossplatform.h"
 #include <sys/time.h>
 #include "framebuffer.h"
+#include "menu.h"
 #include <math.h>
 
 
@@ -51,6 +52,8 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     return n;
 }
 int main(int argc, char const *argv[]) { 
+    // menu
+    unsigned short isMenu = 1;
     // output character dictionary  
     #define CODESLEN UNILEN
     struct dict *codes;
@@ -95,6 +98,7 @@ int main(int argc, char const *argv[]) {
         //for (int b = 0; b < inBuffer; b++) {
             //inBuffer--; // for every character in input buffer
             key = getKey(); // get character
+            if (!isMenu){
             pRad = pA*M_PI/180; // degree to radians
             pNX = pX; // theoretical new position = current position
             pNY = pY;
@@ -115,8 +119,19 @@ int main(int argc, char const *argv[]) {
                     pA-=stepA;
                     break;
                 case  '.':
+                    isMenu = 1;
+                    break;
+            }
+            }
+            else {
+                switch (key) {
+                case  '.':
                     loop = 0;
                     break;
+                case ' ':
+                    isMenu = 0;
+                    break;
+                }
             }
             // check if theoretical new position is not in wall -> write it to current position
             if(world[(int)(pY)][(int)pNX] == 0) {
@@ -126,6 +141,7 @@ int main(int argc, char const *argv[]) {
                 pY = pNY;
             }
         }
+        if (!isMenu){
         // ray casting:
         // draw lines from player in every direction in view
         // lines can only be draws between between to points
@@ -295,6 +311,22 @@ int main(int argc, char const *argv[]) {
         fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
         tLast = tNow;
         frame++;
+        }
+        else {
+            clearB(fb);
+            setBCur(0, 3, fb);
+            for (int i = 0; i < 8; i++) {
+                printB((char*)logo[i], fb);
+                putB('\n', fb);
+            }
+            printB("\n\n Press SPACE to start game", fb);
+            printB("\n\n or . to exit game.", fb);
+            printB("\n\n\n\n\n\n Credits:\n", fb);
+            printB("\n Niklas Bachmann      https://github.com/alavanou", fb);
+            printB("\n Manuel Koenig        https://github.com/Xilef12000", fb);
+            printB("\n\n\n\n This Project on Github:\n", fb);
+            printB("\n https://github.com/Xilef12000/CLIQuest3D", fb);
+        }
 
         displayB(fb, codes, CODESLEN); // write buffer to cli
     }
