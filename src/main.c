@@ -50,9 +50,8 @@ int main(int argc, char const *argv[]) {
     unsigned short isMenu = 1;
     // output character dictionary  
     #define CODESLEN UNILEN
-    struct dict *codes;
-    codes = malloc(sizeof(struct dict)*CODESLEN);
-    setCodes(codes, CODESLEN);
+    struct dict codes[CODESLEN];
+    setCodes(&codes[0], CODESLEN);
     // init buffer
     struct buffer fb;
     fb.sY = malloc(sizeof(unsigned short));
@@ -322,7 +321,7 @@ int main(int argc, char const *argv[]) {
             printB("\n https://github.com/Xilef12000/CLIQuest3D", fb);
         }
 
-        displayB(fb, codes, CODESLEN); // write buffer to cli
+        displayB(fb, &codes[0], CODESLEN); // write buffer to cli
     }
     return 0;
 }
