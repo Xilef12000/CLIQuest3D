@@ -9,7 +9,7 @@ int getCliDim(struct buffer fb) {
     ioctl(0, TIOCGWINSZ, &w);
     (*fb.sY) = w.ws_row - 1;
     (*fb.sX) = w.ws_col - 1;
-    return 0;
+    return 1;
 }
 
 int getKeysInBuffer() {
