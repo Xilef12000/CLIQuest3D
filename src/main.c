@@ -242,6 +242,11 @@ int main(int argc, char const *argv[]) {
             }
             printB("\n\n Press SPACE to start game", fb);
             printB("\n\n or . to exit game.", fb);
+            printB("\n\n\n\n\n\n Credits:\n", fb);
+            printB("\n Niklas Bachmann      https://github.com/alavanou", fb);
+            printB("\n Manuel Koenig        https://github.com/Xilef12000", fb);
+            printB("\n\n\n\n This Project on Github:\n", fb);
+            printB("\n https://github.com/Xilef12000/CLIQuest3D", fb);
         }
 
         displayB(fb); // write buffer to cli
