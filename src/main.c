@@ -118,10 +118,10 @@ int main(int argc, char const *argv[]) {
                     break;
             }
             // check if theoretical new position is not in wall -> write it to current position
-            if(world[(int)(pNX)][(int)pY] == 0) {
+            if(world[(int)(pY)][(int)pNX] == 0) {
                 pX = pNX;
             }
-            if(world[(int)(pX)][(int)pNY] == 0) {
+            if(world[(int)(pNY)][(int)pX] == 0) {
                 pY = pNY;
             }
         }
