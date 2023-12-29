@@ -12,9 +12,9 @@ int map(int x, int inMin, int inMax, int outMin, int outMax);
 #define WORLDSIZE 20
 struct level {
     int world[WORLDSIZE][WORLDSIZE]; // birds perspective of world (world needs a boarder!)
-    float spX; // spawn coordinates and rotation
+    float spX;  // spawn coordinates...
     float spY;
-    int spA;
+    int spA;  // ...and rotation 
 };
 struct level lvl = { // current level lvl
     {
@@ -49,8 +49,6 @@ const float stepXY = 0.5; // player step size
 const int stepA = 5;  // player rotation steps
 int cliX = 144; // default fallback windows size 
 int cliY = 48;
-//char keystr[30];
-//char *keyptr;
 
 int main(int argc, char const *argv[]) { 
     // menu
@@ -92,11 +90,8 @@ int main(int argc, char const *argv[]) {
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
     int loop = 1; // loop until exit
     while(loop) {
-        //int inBuffer = getKeysInBuffer(keyptr); // how many characters in input buffer
         while(getKeysInBuffer()) //inBuffer > 0
         {
-        //for (int b = 0; b < inBuffer; b++) {
-            //inBuffer--; // for every character in input buffer
             key = getKey(); // get character
             if (!isMenu){
             pRad = pA*M_PI/180; // degree to radians
@@ -144,7 +139,7 @@ int main(int argc, char const *argv[]) {
         if (!isMenu){
         // ray casting:
         // draw lines from player in every direction in view
-        // lines can only be draws between between to points
+        // lines can only be drawn between between to points
         // point one: player, and point two a pointer outside of world so it can never be reached
         // the line is drawn in small steps from the first to the second point
         for (int i = 0; i < cliX; i++) {
