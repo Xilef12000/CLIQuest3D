@@ -43,6 +43,24 @@ struct level lvl = { // current level lvl
     10,
     180
 };
+
+// menu
+unsigned short isMenu = 1;
+
+// setup array for distance to wall for each vertical display line
+unsigned short *distance;
+
+// variables for time stats
+struct timeval tNow, tLast;
+unsigned long tTaken, frame = 0;
+
+int key; // buffer for pressed key
+float pX; // player position X
+float pY; // player position Y
+int pA; // player rotation in degree (180 = north)
+float pNX, pNY, pRad; // new theoretical player position x y and rotation in radians
+unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
+
 const short fov = 90; //set field of view to 90 degree
 const short maxVDist = 20; //set max viewing distran
 const float stepXY = 0.5; // player step size
@@ -51,8 +69,6 @@ int cliX = 144; // default fallback windows size
 int cliY = 48;
 
 int main(int argc, char const *argv[]) { 
-    // menu
-    unsigned short isMenu = 1;
     // output character dictionary  
     #define CODESLEN UNILEN
     struct dict codes[CODESLEN];
@@ -75,18 +91,13 @@ int main(int argc, char const *argv[]) {
         fb.bP[i] = 32;
     }
     // setup array for distance to wall for each vertical display line
-    unsigned short *distance;
     distance = malloc(sizeof(unsigned short)*cliX);
     // variables for time stats
-    struct timeval tNow, tLast;
     gettimeofday(&tLast, NULL);
-    unsigned long tTaken, frame = 0;
-    int key; // buffer for pressed key
-    float pX = lvl.spX; // player position X
-    float pY = lvl.spY; // player position Y
-    int pA = lvl.spA; // player rotation in degree (180 = north)
-    float pNX, pNY, pRad; // new theoretical player position x y and rotation in radians
-    unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
+    pX = lvl.spX; // player position X
+    pY = lvl.spY; // player position Y
+    pA = lvl.spA; // player rotation in degree (180 = north)
+
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
     int loop = 1; // loop until exit
     while(loop) {
@@ -120,7 +131,7 @@ int main(int argc, char const *argv[]) {
             }
             else {
                 switch (key) {
-                case  '.':
+                case '.':
                     loop = 0;
                     break;
                 case ' ':
