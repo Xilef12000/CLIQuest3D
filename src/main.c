@@ -38,7 +38,7 @@ const short fov = 90; //set field of view to 90 degree
 const short maxVDist = 20; //set max viewing distran
 const float stepXY = 0.5; // player step size
 const int stepA = 5;  // player rotation steps
-int cliX = 144; // default fallback windows size
+int cliX = 144; // default fallback windows size 
 int cliY = 48;
 //char keystr[30];
 //char *keyptr;
@@ -85,6 +85,7 @@ int main(int argc, char const *argv[]) {
     float pY = spY; // player position Y
     int pA = spA; // player rotation in degree (180 = north)
     float pNX, pNY, pRad; // new theoretical player position x y and rotation in radians
+    unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
     int loop = 1; // loop until exit
     while(loop) {
@@ -217,11 +218,81 @@ int main(int argc, char const *argv[]) {
             }
             putB('\n', fb); // cursor to new line after end of horizontal line 
         } 
+        // draw map
+        setBCur(0, 1, fb); //reset cursor to top left corner
+        short mY1 = pY-(float)mapS/2;
+        mY1 = mY1 > 0 ? mY1 : 0;
+        short mY2 = mY1 == 0 ? mY1+mapS : pY+(float)mapS/2;
+        mY2 = mY2 < WORLDSIZE ? mY2 : WORLDSIZE;
+        mY1 = mY2 != WORLDSIZE ? mY1 : mY2-mapS;
+        short mX1 = pX-(float)mapS/2;
+        mX1 = mX1 > 0 ? mX1 : 0;
+        short mX2 = mX1 == 0 ? mX1+mapS : pX+(float)mapS/2;
+        mX2 = mX2 < WORLDSIZE ? mX2 : WORLDSIZE;
+        mX1 = mX2 != WORLDSIZE ? mX1 : mX2-mapS;
+        for (int i = 0; i < mapS+1; i++) {
+            putB('+', fb);
+            if (i != mapS) {
+                putB(' ', fb);
+            }
+        };
+        putB('\n', fb);
+        for (int i = mY1; i < mY2; i++){
+            putB('+', fb);
+            for (int j = mX1; j < mX2; j++){
+                if (j != mX1) {
+                    putB(' ', fb);
+                }
+                if (world[i][j] == 1) {
+                    putB('#', fb);
+                }
+                else {
+                    putB(' ', fb);
+                }
+            }
+            putB('+', fb);
+            putB('\n', fb);
+        }
+        for (int i = 0; i < mapS+1; i++) {
+            putB('+', fb);
+            if (i != mapS) {
+                putB(' ', fb);
+            }
+        };
+        setBCur((int)pX*2-mX1*2, pY-mY1+2, fb);
+        switch (map(((((int)(pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
+            case 0:
+                putB(13000, fb);
+                break;
+            case 1:
+                putB(13001, fb);
+                break;
+            case 2:
+                putB(13002, fb);
+                break;
+            case 3:
+                putB(13003, fb);
+                break;
+            case 4:
+                putB(13004, fb);
+                break;
+            case 5:
+                putB(13005, fb);
+                break;
+            case 6:
+                putB(13006, fb);
+                break;
+            case 7:
+                putB(13007, fb);
+                break;
+        }
+        
 
         // calculate and output time stats
         gettimeofday(&tNow, NULL);
         tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
-        fprintB(fb, "\ntime: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
+        setBCur(0, cliY+2, fb);
+        fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
         tLast = tNow;
         frame++;
 
