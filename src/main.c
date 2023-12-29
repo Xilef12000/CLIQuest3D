@@ -1,11 +1,12 @@
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <sys/ioctl.h>
+#include "crossplatform.h"
 #include <sys/time.h>
 #include "framebuffer.h"
 #include "menu.h"
+#include <math.h>
+
 
 #define WORLDSIZE 20
 const int world[WORLDSIZE][WORLDSIZE] = {
@@ -38,8 +39,11 @@ const short fov = 90; //set field of view to 90 degree
 const short maxVDist = 20; //set max viewing distran
 const float stepXY = 0.5; // player step size
 const int stepA = 5;  // player rotation steps
-int cliX = 144; // default fallback windows size
+int cliX = 144; // default fallback windows size 
 int cliY = 48;
+//char keystr[30];
+//char *keyptr;
+
 int map(int x, int inMin, int inMax, int outMin, int outMax) {
     // mapping function of one int in range to int in other range
     int n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
@@ -47,22 +51,29 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     if (n < outMin) n = outMin;
     return n;
 }
-int main(int argc, char const *argv[]) {   
+int main(int argc, char const *argv[]) { 
     // menu
     unsigned short isMenu = 1;
-    // get window size in characters
+    // output character dictionary  
+    #define CODESLEN UNILEN
+    struct dict *codes;
+    codes = malloc(sizeof(struct dict)*CODESLEN);
+    setCodes(codes, CODESLEN);
+    // init buffer
     struct buffer fb;
-    struct winsize w;
-    ioctl(0, TIOCGWINSZ, &w);
-    fb.sY = w.ws_row - 1;
-    fb.sX = w.ws_col - 1;
-    cliY = fb.sY - 4;
-    cliX = fb.sX - 4;
+    fb.sY = malloc(sizeof(unsigned short));
+    fb.sX = malloc(sizeof(unsigned short));
+    // get window size in characters
+    if (getCliDim(fb)){
+        cliY = (*fb.sY) - 4;
+        cliX = (*fb.sX) - 4;
+    }
     double cliA = fov / (double) cliX;
-    // setup buffer
-    fb.bP = malloc(sizeof(unsigned short)*fb.sX*fb.sY);
+    // clear buffer
+    fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));
     fb.cur = malloc(sizeof(fb.cur));
-    for (int i = 0; i < fb.sX*fb.sY; i++){
+    (*fb.cur) = 0; // avoid undefined values
+    for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
         fb.bP[i] = 32;
     }
     // setup array for distance to wall for each vertical display line
@@ -77,18 +88,16 @@ int main(int argc, char const *argv[]) {
     float pY = spY; // player position Y
     int pA = spA; // player rotation in degree (180 = north)
     float pNX, pNY, pRad; // new theoretical player position x y and rotation in radians
-    // set shell flags
-    system ("/bin/stty raw"); // canonical mode -> direct input/output
-    system ("/bin/stty -echo"); // no echo of user input
-    system ("tput civis"); // hide blinking cursor
+    unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
     int loop = 1; // loop until exit
     while(loop) {
-        int inBuffer;
-        ioctl(0, FIONREAD, &inBuffer); // how many characters in input buffer
-        while (inBuffer > 0) {
-            inBuffer--; // for every character in input buffer
-            key=getchar(); // get character
+        //int inBuffer = getKeysInBuffer(keyptr); // how many characters in input buffer
+        while(getKeysInBuffer()) //inBuffer > 0
+        {
+        //for (int b = 0; b < inBuffer; b++) {
+            //inBuffer--; // for every character in input buffer
+            key = getKey(); // get character
             if (!isMenu){
             pRad = pA*M_PI/180; // degree to radians
             pNX = pX; // theoretical new position = current position
@@ -189,7 +198,7 @@ int main(int argc, char const *argv[]) {
                         }
                         else if (distance[j] < maxVDist){
                            putB(11003, fb);
-                        }
+                        }   
                         else {
                             putB(11004, fb);
                         }
@@ -225,11 +234,81 @@ int main(int argc, char const *argv[]) {
             }
             putB('\n', fb); // cursor to new line after end of horizontal line 
         } 
+        // draw map
+        setBCur(0, 1, fb); //reset cursor to top left corner
+        short mY1 = pY-(float)mapS/2;
+        mY1 = mY1 > 0 ? mY1 : 0;
+        short mY2 = mY1 == 0 ? mY1+mapS : pY+(float)mapS/2;
+        mY2 = mY2 < WORLDSIZE ? mY2 : WORLDSIZE;
+        mY1 = mY2 != WORLDSIZE ? mY1 : mY2-mapS;
+        short mX1 = pX-(float)mapS/2;
+        mX1 = mX1 > 0 ? mX1 : 0;
+        short mX2 = mX1 == 0 ? mX1+mapS : pX+(float)mapS/2;
+        mX2 = mX2 < WORLDSIZE ? mX2 : WORLDSIZE;
+        mX1 = mX2 != WORLDSIZE ? mX1 : mX2-mapS;
+        for (int i = 0; i < mapS+1; i++) {
+            putB('+', fb);
+            if (i != mapS) {
+                putB(' ', fb);
+            }
+        };
+        putB('\n', fb);
+        for (int i = mY1; i < mY2; i++){
+            putB('+', fb);
+            for (int j = mX1; j < mX2; j++){
+                if (j != mX1) {
+                    putB(' ', fb);
+                }
+                if (world[i][j] == 1) {
+                    putB('#', fb);
+                }
+                else {
+                    putB(' ', fb);
+                }
+            }
+            putB('+', fb);
+            putB('\n', fb);
+        }
+        for (int i = 0; i < mapS+1; i++) {
+            putB('+', fb);
+            if (i != mapS) {
+                putB(' ', fb);
+            }
+        };
+        setBCur((int)pX*2-mX1*2, pY-mY1+2, fb);
+        switch (map(((((int)(pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
+            case 0:
+                putB(13000, fb);
+                break;
+            case 1:
+                putB(13001, fb);
+                break;
+            case 2:
+                putB(13002, fb);
+                break;
+            case 3:
+                putB(13003, fb);
+                break;
+            case 4:
+                putB(13004, fb);
+                break;
+            case 5:
+                putB(13005, fb);
+                break;
+            case 6:
+                putB(13006, fb);
+                break;
+            case 7:
+                putB(13007, fb);
+                break;
+        }
+        
 
         // calculate and output time stats
         gettimeofday(&tNow, NULL);
         tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
-        fprintB(fb, "\ntime: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
+        setBCur(0, cliY+2, fb);
+        fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
         tLast = tNow;
         frame++;
         }
@@ -249,9 +328,7 @@ int main(int argc, char const *argv[]) {
             printB("\n https://github.com/Xilef12000/CLIQuest3D", fb);
         }
 
-        displayB(fb); // write buffer to cli
+        displayB(fb, codes, CODESLEN); // write buffer to cli
     }
-    system ("/bin/stty sane"); // reset shell flags to default
-    system ("tput cnorm"); // show cursor in shell
     return 0;
 }
