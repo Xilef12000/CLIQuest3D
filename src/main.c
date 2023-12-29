@@ -40,6 +40,9 @@ const float stepXY = 0.5; // player step size
 const int stepA = 5;  // player rotation steps
 int cliX = 144; // default fallback windows size
 int cliY = 48;
+//char keystr[30];
+//char *keyptr;
+
 int map(int x, int inMin, int inMax, int outMin, int outMax) {
     // mapping function of one int in range to int in other range
     int n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
@@ -66,6 +69,7 @@ int main(int argc, char const *argv[]) {
     // clear buffer
     fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));
     fb.cur = malloc(sizeof(fb.cur));
+    (*fb.cur) = 0; // avoid undefined values
     for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
         fb.bP[i] = 32;
     }
@@ -84,10 +88,12 @@ int main(int argc, char const *argv[]) {
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
     int loop = 1; // loop until exit
     while(loop) {
-        int inBuffer = getKeysInBuffer(); // how many characters in input buffer
-        while (inBuffer > 0) {
-            inBuffer--; // for every character in input buffer
-            key=getKey(); // get character
+        //int inBuffer = getKeysInBuffer(keyptr); // how many characters in input buffer
+        while(getKeysInBuffer()) //inBuffer > 0
+        {
+        //for (int b = 0; b < inBuffer; b++) {
+            //inBuffer--; // for every character in input buffer
+            key = getKey(); // get character
             pRad = pA*M_PI/180; // degree to radians
             pNX = pX; // theoretical new position = current position
             pNY = pY;
@@ -175,7 +181,7 @@ int main(int argc, char const *argv[]) {
                         }
                         else if (distance[j] < maxVDist){
                            putB(11003, fb);
-                        }
+                        }   
                         else {
                             putB(11004, fb);
                         }
