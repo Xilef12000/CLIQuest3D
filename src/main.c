@@ -9,32 +9,39 @@
 
 
 #define WORLDSIZE 20
-const int world[WORLDSIZE][WORLDSIZE] = {
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-}; // birds perspective of world (world needs a boarder!)
-
-const float spX = 10; // spawn coordinates and rotation
-const float spY = 10;
-const int spA = 180;
+struct level {
+    int world[WORLDSIZE][WORLDSIZE]; // birds perspective of world (world needs a boarder!)
+    float spX; // spawn coordinates and rotation
+    float spY;
+    int spA;
+};
+struct level lvl = { // current level lvl
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    },
+    10,
+    10,
+    180
+};
 const short fov = 90; //set field of view to 90 degree
 const short maxVDist = 20; //set max viewing distran
 const float stepXY = 0.5; // player step size
@@ -84,9 +91,9 @@ int main(int argc, char const *argv[]) {
     gettimeofday(&tLast, NULL);
     unsigned long tTaken, frame = 0;
     int key; // buffer for pressed key
-    float pX = spX; // player position X
-    float pY = spY; // player position Y
-    int pA = spA; // player rotation in degree (180 = north)
+    float pX = lvl.spX; // player position X
+    float pY = lvl.spY; // player position Y
+    int pA = lvl.spA; // player rotation in degree (180 = north)
     float pNX, pNY, pRad; // new theoretical player position x y and rotation in radians
     unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
@@ -134,10 +141,10 @@ int main(int argc, char const *argv[]) {
                 }
             }
             // check if theoretical new position is not in wall -> write it to current position
-            if(world[(int)(pY)][(int)pNX] == 0) {
+            if(lvl.world[(int)(pY)][(int)pNX] == 0) {
                 pX = pNX;
             }
-            if(world[(int)(pNY)][(int)pX] == 0) {
+            if(lvl.world[(int)(pNY)][(int)pX] == 0) {
                 pY = pNY;
             }
         }
@@ -163,7 +170,7 @@ int main(int argc, char const *argv[]) {
             float err = dx+dy, e2;
             while (1) {
                 // if current step position in wall
-                if (world[(int)x1][(int)y1] == 1) {
+                if (lvl.world[(int)x1][(int)y1] == 1) {
                     distance[i] = l/10; // safe distance to wall (number of necessary steps)
                     break; // exit to next view line
                 }
@@ -259,7 +266,7 @@ int main(int argc, char const *argv[]) {
                 if (j != mX1) {
                     putB(' ', fb);
                 }
-                if (world[i][j] == 1) {
+                if (lvl.world[i][j] == 1) {
                     putB('#', fb);
                 }
                 else {
