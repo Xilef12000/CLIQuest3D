@@ -7,6 +7,7 @@
 #include "menu.h"
 #include <math.h>
 
+int map(int x, int inMin, int inMax, int outMin, int outMax);
 
 #define WORLDSIZE 20
 const int world[WORLDSIZE][WORLDSIZE] = {
@@ -44,13 +45,6 @@ int cliY = 48;
 //char keystr[30];
 //char *keyptr;
 
-int map(int x, int inMin, int inMax, int outMin, int outMax) {
-    // mapping function of one int in range to int in other range
-    int n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    if (n > outMax) n = outMax;
-    if (n < outMin) n = outMin;
-    return n;
-}
 int main(int argc, char const *argv[]) { 
     // menu
     unsigned short isMenu = 1;
@@ -331,4 +325,12 @@ int main(int argc, char const *argv[]) {
         displayB(fb, codes, CODESLEN); // write buffer to cli
     }
     return 0;
+}
+
+int map(int x, int inMin, int inMax, int outMin, int outMax) {
+    // mapping function of one int in range to int in other range
+    int n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    if (n > outMax) n = outMax;
+    if (n < outMin) n = outMin;
+    return n;
 }
