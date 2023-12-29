@@ -62,7 +62,7 @@ int printB(char s[], struct buffer fb){
 };
 int clearB(struct buffer fb){
     setBCur(0, 0, fb);
-    for (int i = 0; i < fb.sX*fb.sY; i++) {
+    for (int i = 0; i < (*fb.sX)*(*fb.sY); i++) {
         putB(' ', fb);
     }
     return 0;
