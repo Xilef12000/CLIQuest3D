@@ -11,6 +11,8 @@ int map(int x, int inMin, int inMax, int outMin, int outMax);
 void kb_control();
 void ray_cast();
 void draw_3d();
+void draw_map();
+void draw_menu();
 
 #define WORLDSIZE 20
 struct level {
@@ -65,8 +67,8 @@ float pX; // player position X
 float pY; // player position Y
 int pA; // player rotation in degree (180 = north)
 float pNX, pNY, pRad; // new theoretical player position x y and rotation in radians
-unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
 
+unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
 const short fov = 90; //set field of view to 90 degree
 const short maxVDist = 20; //set max viewing distran
 const float stepXY = 0.5; // player step size
@@ -110,103 +112,22 @@ int main(int argc, char const *argv[]) {
         while(getKeysInBuffer()) kb_control(); // inBuffer > 0
         if (!isMenu){
             ray_cast();
-            fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); // print player coordinates and rotation
+
+            // print player coordinates and rotation
+            fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); 
             setBCur(0, 1, fb);
 
             draw_3d();
-        // draw map
-        setBCur(0, 1, fb); //reset cursor to top left corner
-        short mY1 = pY-(float)mapS/2;
-        mY1 = mY1 > 0 ? mY1 : 0;
-        short mY2 = mY1 == 0 ? mY1+mapS : pY+(float)mapS/2;
-        mY2 = mY2 < WORLDSIZE ? mY2 : WORLDSIZE;
-        mY1 = mY2 != WORLDSIZE ? mY1 : mY2-mapS;
-        short mX1 = pX-(float)mapS/2;
-        mX1 = mX1 > 0 ? mX1 : 0;
-        short mX2 = mX1 == 0 ? mX1+mapS : pX+(float)mapS/2;
-        mX2 = mX2 < WORLDSIZE ? mX2 : WORLDSIZE;
-        mX1 = mX2 != WORLDSIZE ? mX1 : mX2-mapS;
-        for (int i = 0; i < mapS+1; i++) {
-            putB('+', fb);
-            if (i != mapS) {
-                putB(' ', fb);
-            }
-        };
-        putB('\n', fb);
-        for (int i = mY1; i < mY2; i++){
-            putB('+', fb);
-            for (int j = mX1; j < mX2; j++){
-                if (j != mX1) {
-                    putB(' ', fb);
-                }
-                if (lvl.world[i][j] == 1) {
-                    putB('#', fb);
-                }
-                else {
-                    putB(' ', fb);
-                }
-            }
-            putB('+', fb);
-            putB('\n', fb);
-        }
-        for (int i = 0; i < mapS+1; i++) {
-            putB('+', fb);
-            if (i != mapS) {
-                putB(' ', fb);
-            }
-        };
-        setBCur((int)pX*2-mX1*2, pY-mY1+2, fb);
-        switch (map(((((int)(pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
-            case 0:
-                putB(13000, fb);
-                break;
-            case 1:
-                putB(13001, fb);
-                break;
-            case 2:
-                putB(13002, fb);
-                break;
-            case 3:
-                putB(13003, fb);
-                break;
-            case 4:
-                putB(13004, fb);
-                break;
-            case 5:
-                putB(13005, fb);
-                break;
-            case 6:
-                putB(13006, fb);
-                break;
-            case 7:
-                putB(13007, fb);
-                break;
-        }
-        
+            draw_map();
 
-        // calculate and output time stats
-        gettimeofday(&tNow, NULL);
-        tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
-        setBCur(0, cliY+2, fb);
-        fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
-        tLast = tNow;
-        frame++;
-        }
-        else {
-            clearB(fb);
-            setBCur(0, 3, fb);
-            for (int i = 0; i < 8; i++) {
-                printB((char*)logo[i], fb);
-                putB('\n', fb);
-            }
-            printB("\n\n Press SPACE to start game", fb);
-            printB("\n\n or . to exit game.", fb);
-            printB("\n\n\n\n\n\n Credits:\n", fb);
-            printB("\n Niklas Bachmann      https://github.com/alavanou", fb);
-            printB("\n Manuel Koenig        https://github.com/Xilef12000", fb);
-            printB("\n\n\n\n This Project on Github:\n", fb);
-            printB("\n https://github.com/Xilef12000/CLIQuest3D", fb);
-        }
+            // calculate and output time stats
+            gettimeofday(&tNow, NULL);
+            tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
+            setBCur(0, cliY+2, fb);
+            fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
+            tLast = tNow;
+            frame++;
+        }else draw_menu();
 
         displayB(fb, &codes[0], CODESLEN); // write buffer to cli
     }
@@ -364,4 +285,90 @@ void draw_3d()
     } 
 }
 
+void draw_map(){
+    // draw map
+    setBCur(0, 1, fb); //reset cursor to top left corner
+    short mY1 = pY-(float)mapS/2;
+    mY1 = mY1 > 0 ? mY1 : 0;
+    short mY2 = mY1 == 0 ? mY1+mapS : pY+(float)mapS/2;
+    mY2 = mY2 < WORLDSIZE ? mY2 : WORLDSIZE;
+    mY1 = mY2 != WORLDSIZE ? mY1 : mY2-mapS;
+    short mX1 = pX-(float)mapS/2;
+    mX1 = mX1 > 0 ? mX1 : 0;
+    short mX2 = mX1 == 0 ? mX1+mapS : pX+(float)mapS/2;
+    mX2 = mX2 < WORLDSIZE ? mX2 : WORLDSIZE;
+    mX1 = mX2 != WORLDSIZE ? mX1 : mX2-mapS;
+    for (int i = 0; i < mapS+1; i++) {
+        putB('+', fb);
+        if (i != mapS) {
+            putB(' ', fb);
+        }
+    };
+    putB('\n', fb);
+    for (int i = mY1; i < mY2; i++){
+        putB('+', fb);
+        for (int j = mX1; j < mX2; j++){
+            if (j != mX1) {
+                putB(' ', fb);
+            }
+            if (lvl.world[i][j] == 1) {
+                putB('#', fb);
+            }
+            else {
+                putB(' ', fb);
+            }
+        }
+        putB('+', fb);
+        putB('\n', fb);
+    }
+    for (int i = 0; i < mapS+1; i++) {
+        putB('+', fb);
+        if (i != mapS) {
+            putB(' ', fb);
+        }
+    };
+    setBCur((int)pX*2-mX1*2, pY-mY1+2, fb);
+    switch (map(((((int)(pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
+        case 0:
+            putB(13000, fb);
+            break;
+        case 1:
+            putB(13001, fb);
+            break;
+        case 2:
+            putB(13002, fb);
+            break;
+        case 3:
+            putB(13003, fb);
+            break;
+        case 4:
+            putB(13004, fb);
+            break;
+        case 5:
+            putB(13005, fb);
+            break;
+        case 6:
+            putB(13006, fb);
+            break;
+        case 7:
+            putB(13007, fb);
+            break;
+    }
+}
+void draw_menu()
+{
+    clearB(fb);
+    setBCur(0, 3, fb);
+    for (int i = 0; i < 8; i++) {
+        printB((char*)logo[i], fb);
+        putB('\n', fb);
+    }
+    printB("\n\n Press SPACE to start game", fb);
+    printB("\n\n or . to exit game.", fb);
+    printB("\n\n\n\n\n\n Credits:\n", fb);
+    printB("\n Niklas Bachmann      https://github.com/alavanou", fb);
+    printB("\n Manuel Koenig        https://github.com/Xilef12000", fb);
+    printB("\n\n\n\n This Project on Github:\n", fb);
+    printB("\n https://github.com/Xilef12000/CLIQuest3D", fb);
+}
 
