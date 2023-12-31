@@ -25,23 +25,23 @@ int main(int argc, char const *argv[]) {
     distance = malloc(sizeof(unsigned short)*cliX);
     // variables for time stats
     gettimeofday(&tLast, NULL);
-    pX = lvl.spX; // player position X
-    pY = lvl.spY; // player position Y
-    pA = lvl.spA; // player rotation in degree (180 = north)
-
+    
+    struct position player;
+    player = lvl.spawn;
+    
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
 
     while(loop) {
-        while(getKeysInBuffer()) kb_control(); // inBuffer > 0
+        while(getKeysInBuffer()) player = kb_control(player); // inBuffer > 0
         if (!isMenu){
-            ray_cast();
+            ray_cast(player);
 
             // print player coordinates and rotation
             fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); 
             setBCur(0, 1, fb);
 
             draw_3d();
-            draw_map();
+            draw_map(player);
 
             // calculate and output time stats
             gettimeofday(&tNow, NULL);
@@ -65,53 +65,56 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     return n;
 }
 
-void kb_control()
+struct position kb_control(struct position player)
 {
+    struct position new;
+    new = player;
     key = getKey(); // get character
+
     if (!isMenu){
-    pRad = pA*M_PI/180; // degree to radians
-    pNX = pX; // theoretical new position = current position
-    pNY = pY;
-    switch (key) {
-        // rotate or walk according to key press, exit if '.'
-        case 'w':
-            pNX += sin(pRad)*stepXY;
-            pNY += cos(pRad)*stepXY;
-            break;
-        case 'a':
-            pA+=stepA;
-            break;
-        case 's':
-            pNX -= sin(pRad)*stepXY;
-            pNY -= cos(pRad)*stepXY;
-            break;
-        case 'd':
-            pA-=stepA;
-            break;
-        case  '.':
-            isMenu = 1;
-            break;
-    }
+        float pRad = player.pA*M_PI/180; // degree to radians
+        switch (key) {
+            // rotate or walk according to key press, exit if '.'
+            case 'w':
+                new.pX += sin(pRad)*stepXY;
+                new.pY += cos(pRad)*stepXY;
+                break;
+            case 'a':
+                player.pA+=stepA;
+                break;
+            case 's':
+                new.pX -= sin(pRad)*stepXY;
+                new.pY -= cos(pRad)*stepXY;
+                break;
+            case 'd':
+                player.pA-=stepA;
+                break;
+            case  '.':
+                isMenu = 1;
+                break;
+        }
     }
     else {
         switch (key) {
-        case '.':
-            loop = 0;
-            break;
-        case ' ':
-            isMenu = 0;
-            break;
+            case '.':
+                loop = 0;
+                break;
+            case ' ':
+                isMenu = 0;
+                break;
         }
     }
     // check if theoretical new position is not in wall -> write it to current position
-    if(lvl.world[(int)(pY)][(int)pNX] == 0) {
-        pX = pNX;
+    // separate check for walk along wall
+    if(lvl.world[(int)(player.pY)][(int)new.pX] == 0) {
+        player.pX = new.pX;
     }
-    if(lvl.world[(int)(pNY)][(int)pX] == 0) {
-        pY = pNY;
+    if(lvl.world[(int)(new.pY)][(int)player.pX] == 0) {
+        player.pY = new.pY;
     }
+    return player;
 }
-void ray_cast(){
+void ray_cast(struct position player){
     // ray casting:
     // draw lines from player in every direction in view
     // lines can only be drawn between between to points
@@ -119,10 +122,10 @@ void ray_cast(){
     // the line is drawn in small steps from the first to the second point
     for (int i = 0; i < cliX; i++) {
         float l = 0; // line step counter
-        float x1 = pY; // point one = player position
-        float y1 = pX;
+        float x1 = player.pY; // point one = player position
+        float y1 = player.pX;
         // line degree in radiens (looking direction - half pov + line offset)
-        float srad = (((pA - (double) fov / 2) + (i * cliA)) * M_PI) / 180;
+        float srad = (((player.pA - (double) fov / 2) + (i * cliA)) * M_PI) / 180;
         float y2 = y1+(sin(srad)*WORLDSIZE+1); // calculate point two
         float x2 = x1+(cos(srad)*WORLDSIZE+1);
 
@@ -208,10 +211,10 @@ void draw_3d()
     } 
 }
 
-void draw_map(){
+void draw_map(struct position player){
     // draw map
     setBCur(0, 1, fb); //reset cursor to top left corner
-    short mY1 = pY-(float)mapS/2;
+    short mY1 = player.pY-(float)mapS/2;
     mY1 = mY1 > 0 ? mY1 : 0;
     short mY2 = mY1 == 0 ? mY1+mapS : pY+(float)mapS/2;
     mY2 = mY2 < WORLDSIZE ? mY2 : WORLDSIZE;
