@@ -1,25 +1,9 @@
 #include "quest.h"
 
 int main(int argc, char const *argv[]) { 
-    // init buffer
-    fb.sY = malloc(sizeof(unsigned short));
-    fb.sX = malloc(sizeof(unsigned short));
 
-    // get window size in characters
-    if (getCliDim(fb)){
-        cliY = (*fb.sY) - 4;
-        cliX = (*fb.sX) - 4;
-    }
-    cliA = fov / (double) cliX;
-
-    // clear buffer
-    fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));
-    fb.cur = malloc(sizeof(fb.cur));
-    (*fb.cur) = 0; // avoid undefined values
-    for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
-        fb.bP[i] = 32;
-    }
-
+    struct buffer fb = init_buffer();
+    
     // variables for time stats
     struct timeval tNow, tLast;
     unsigned long tTaken, frame = 0;
@@ -43,8 +27,8 @@ int main(int argc, char const *argv[]) {
             fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", player.pX, player.pY, player.pA); 
             setBCur(0, 1, fb);
 
-            draw_3d(distance);
-            draw_map(player);
+            draw_3d(distance, fb);
+            draw_map(player, fb);
 
             // calculate and output time stats
             gettimeofday(&tNow, NULL);
@@ -53,11 +37,34 @@ int main(int argc, char const *argv[]) {
             fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
             tLast = tNow;
             frame++;
-        }else draw_menu();
+        }else draw_menu(fb);
 
         displayB(fb, &codes[0], UNILEN); // write buffer to cli
     }
     return 0;
+}
+
+struct buffer init_buffer()
+{
+    struct buffer fb;
+    fb.sY = malloc(sizeof(unsigned short));
+    fb.sX = malloc(sizeof(unsigned short));
+
+    // get window size in characters
+    if (getCliDim(fb)){
+        cliY = (*fb.sY) - 4;
+        cliX = (*fb.sX) - 4;
+    }
+    cliA = fov / (double) cliX;
+
+    // clear buffer
+    fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));
+    fb.cur = malloc(sizeof(fb.cur));
+    (*fb.cur) = 0; // avoid undefined values
+    for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
+        fb.bP[i] = 32;
+    }
+    return fb;
 }
 
 int map(int x, int inMin, int inMax, int outMin, int outMax) {
@@ -158,7 +165,7 @@ void ray_cast(struct position player, unsigned short *distance){
     }
 }
 
-void draw_3d(unsigned short *distance)
+void draw_3d(unsigned short *distance, struct buffer fb)
 {
     for (int i = 0; i < cliY; i++) { //for every horizontal line of output image
         for (int j = cliX-1; j >= 0; j--) { // for every pixel in horizontal line
@@ -214,7 +221,7 @@ void draw_3d(unsigned short *distance)
     } 
 }
 
-void draw_map(struct position player){
+void draw_map(struct position player, struct buffer fb){
     // draw map
     setBCur(0, 1, fb); //reset cursor to top left corner
     short mY1 = player.pY-(float)mapS/2;
@@ -284,7 +291,7 @@ void draw_map(struct position player){
             break;
     }
 }
-void draw_menu()
+void draw_menu(struct buffer fb)
 {
     clearB(fb);
     setBCur(0, 3, fb);

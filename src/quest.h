@@ -7,12 +7,13 @@
 #include "menu.h"
 #include <math.h>
 
+struct buffer init_buffer();
 int map(int x, int inMin, int inMax, int outMin, int outMax);
 struct position kb_control(struct position player);
 void ray_cast(struct position player, unsigned short *distance);
-void draw_3d(unsigned short *distance);
-void draw_map(struct position player);
-void draw_menu();
+void draw_3d(unsigned short *distance, struct buffer fb);
+void draw_map(struct position player, struct buffer fb);
+void draw_menu(struct buffer fb);
 
 #define WORLDSIZE 20
 struct position{
@@ -50,8 +51,6 @@ struct level lvl = { // current level lvl
     }, 
     10, 10, 180
 };
-
-struct buffer fb;
 
 // menu
 unsigned short isMenu = 1;
