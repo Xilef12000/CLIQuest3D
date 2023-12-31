@@ -1,19 +1,17 @@
 #include "quest.h"
 
 int main(int argc, char const *argv[]) { 
-    // output character dictionary  
-    #define CODESLEN UNILEN
-    struct dict codes[CODESLEN];
-    setCodes(&codes[0], CODESLEN);
     // init buffer
     fb.sY = malloc(sizeof(unsigned short));
     fb.sX = malloc(sizeof(unsigned short));
+
     // get window size in characters
     if (getCliDim(fb)){
         cliY = (*fb.sY) - 4;
         cliX = (*fb.sX) - 4;
     }
     cliA = fov / (double) cliX;
+
     // clear buffer
     fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));
     fb.cur = malloc(sizeof(fb.cur));
@@ -21,26 +19,31 @@ int main(int argc, char const *argv[]) {
     for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
         fb.bP[i] = 32;
     }
-    // setup array for distance to wall for each vertical display line
-    distance = malloc(sizeof(unsigned short)*cliX);
+
     // variables for time stats
+    struct timeval tNow, tLast;
+    unsigned long tTaken, frame = 0;
     gettimeofday(&tLast, NULL);
+
+    // setup array for distance to wall for each vertical display line
+    unsigned short distance[cliX];
     
+    // initialize player position
     struct position player;
     player = lvl.spawn;
-    
+
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
 
     while(loop) {
         while(getKeysInBuffer()) player = kb_control(player); // inBuffer > 0
         if (!isMenu){
-            ray_cast(player);
+            ray_cast(player, distance);
 
             // print player coordinates and rotation
-            fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", pX, pY, pA); 
+            fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", player.pX, player.pY, player.pA); 
             setBCur(0, 1, fb);
 
-            draw_3d();
+            draw_3d(distance);
             draw_map(player);
 
             // calculate and output time stats
@@ -52,7 +55,7 @@ int main(int argc, char const *argv[]) {
             frame++;
         }else draw_menu();
 
-        displayB(fb, &codes[0], CODESLEN); // write buffer to cli
+        displayB(fb, &codes[0], UNILEN); // write buffer to cli
     }
     return 0;
 }
@@ -69,7 +72,7 @@ struct position kb_control(struct position player)
 {
     struct position new;
     new = player;
-    key = getKey(); // get character
+    int key = getKey(); // get character
 
     if (!isMenu){
         float pRad = player.pA*M_PI/180; // degree to radians
@@ -114,7 +117,7 @@ struct position kb_control(struct position player)
     }
     return player;
 }
-void ray_cast(struct position player){
+void ray_cast(struct position player, unsigned short *distance){
     // ray casting:
     // draw lines from player in every direction in view
     // lines can only be drawn between between to points
@@ -155,7 +158,7 @@ void ray_cast(struct position player){
     }
 }
 
-void draw_3d()
+void draw_3d(unsigned short *distance)
 {
     for (int i = 0; i < cliY; i++) { //for every horizontal line of output image
         for (int j = cliX-1; j >= 0; j--) { // for every pixel in horizontal line
@@ -216,12 +219,12 @@ void draw_map(struct position player){
     setBCur(0, 1, fb); //reset cursor to top left corner
     short mY1 = player.pY-(float)mapS/2;
     mY1 = mY1 > 0 ? mY1 : 0;
-    short mY2 = mY1 == 0 ? mY1+mapS : pY+(float)mapS/2;
+    short mY2 = mY1 == 0 ? mY1+mapS : player.pY+(float)mapS/2;
     mY2 = mY2 < WORLDSIZE ? mY2 : WORLDSIZE;
     mY1 = mY2 != WORLDSIZE ? mY1 : mY2-mapS;
-    short mX1 = pX-(float)mapS/2;
+    short mX1 = player.pX-(float)mapS/2;
     mX1 = mX1 > 0 ? mX1 : 0;
-    short mX2 = mX1 == 0 ? mX1+mapS : pX+(float)mapS/2;
+    short mX2 = mX1 == 0 ? mX1+mapS : player.pX+(float)mapS/2;
     mX2 = mX2 < WORLDSIZE ? mX2 : WORLDSIZE;
     mX1 = mX2 != WORLDSIZE ? mX1 : mX2-mapS;
     for (int i = 0; i < mapS+1; i++) {
@@ -253,8 +256,8 @@ void draw_map(struct position player){
             putB(' ', fb);
         }
     };
-    setBCur((int)pX*2-mX1*2, pY-mY1+2, fb);
-    switch (map(((((int)(pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
+    setBCur((int)player.pX*2-mX1*2, player.pY-mY1+2, fb);
+    switch (map(((((int)(player.pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
         case 0:
             putB(13000, fb);
             break;
