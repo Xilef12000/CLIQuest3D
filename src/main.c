@@ -12,23 +12,23 @@ int main(int argc, char const *argv[]) {
     // setup array for distance to wall for each vertical display line
     unsigned short distance[cliX];
     
-    // initialize player position
-    struct position player;
-    player = lvl.spawn;
+    // initialize player_loc position
+    struct position player_loc;
+    player_loc = lvl.spawn;
 
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
 
     while(loop) {
-        while(getKeysInBuffer()) player = kb_control(player); // inBuffer > 0
+        while(getKeysInBuffer()) player_loc = kb_control(player_loc); // inBuffer > 0
         if (!isMenu){
-            ray_cast(player, distance);
+            ray_cast(player_loc, distance);
 
-            // print player coordinates and rotation
-            fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", player.pX, player.pY, player.pA); 
+            // print player_loc coordinates and rotation
+            fprintB(fb, "X:%6.3f/Y:%6.3f/% 4d° \r\n", player_loc.pX, player_loc.pY, player_loc.pA); 
             setBCur(0, 1, fb);
 
             draw_3d(distance, fb);
-            draw_map(player, fb);
+            draw_map(player_loc, fb);
 
             // calculate and output time stats
             gettimeofday(&tNow, NULL);
@@ -75,14 +75,14 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     return n;
 }
 
-struct position kb_control(struct position player)
+struct position kb_control(struct position player_loc)
 {
     struct position new;
-    new = player;
+    new = player_loc;
     int key = getKey(); // get character
 
     if (!isMenu){
-        float pRad = player.pA*M_PI/180; // degree to radians
+        float pRad = player_loc.pA*M_PI/180; // degree to radians
         switch (key) {
             // rotate or walk according to key press, exit if '.'
             case 'w':
@@ -90,14 +90,14 @@ struct position kb_control(struct position player)
                 new.pY += cos(pRad)*stepXY;
                 break;
             case 'a':
-                player.pA+=stepA;
+                player_loc.pA+=stepA;
                 break;
             case 's':
                 new.pX -= sin(pRad)*stepXY;
                 new.pY -= cos(pRad)*stepXY;
                 break;
             case 'd':
-                player.pA-=stepA;
+                player_loc.pA-=stepA;
                 break;
             case  '.':
                 isMenu = 1;
@@ -116,26 +116,26 @@ struct position kb_control(struct position player)
     }
     // check if theoretical new position is not in wall -> write it to current position
     // separate check for walk along wall
-    if(lvl.world[(int)(player.pY)][(int)new.pX] == 0) {
-        player.pX = new.pX;
+    if(lvl.world[(int)(player_loc.pY)][(int)new.pX] == 0) {
+        player_loc.pX = new.pX;
     }
-    if(lvl.world[(int)(new.pY)][(int)player.pX] == 0) {
-        player.pY = new.pY;
+    if(lvl.world[(int)(new.pY)][(int)player_loc.pX] == 0) {
+        player_loc.pY = new.pY;
     }
-    return player;
+    return player_loc;
 }
-void ray_cast(struct position player, unsigned short *distance){
+void ray_cast(struct position player_loc, unsigned short *distance){
     // ray casting:
-    // draw lines from player in every direction in view
+    // draw lines from player_loc in every direction in view
     // lines can only be drawn between between to points
-    // point one: player, and point two a pointer outside of world so it can never be reached
+    // point one: player_loc, and point two a pointer outside of world so it can never be reached
     // the line is drawn in small steps from the first to the second point
     for (int i = 0; i < cliX; i++) {
         float l = 0; // line step counter
-        float x1 = player.pY; // point one = player position
-        float y1 = player.pX;
+        float x1 = player_loc.pY; // point one = player_loc position
+        float y1 = player_loc.pX;
         // line degree in radiens (looking direction - half pov + line offset)
-        float srad = (((player.pA - (double) fov / 2) + (i * cliA)) * M_PI) / 180;
+        float srad = (((player_loc.pA - (double) fov / 2) + (i * cliA)) * M_PI) / 180;
         float y2 = y1+(sin(srad)*WORLDSIZE+1); // calculate point two
         float x2 = x1+(cos(srad)*WORLDSIZE+1);
 
@@ -165,146 +165,4 @@ void ray_cast(struct position player, unsigned short *distance){
     }
 }
 
-void draw_3d(unsigned short *distance, struct buffer fb)
-{
-    for (int i = 0; i < cliY; i++) { //for every horizontal line of output image
-        for (int j = cliX-1; j >= 0; j--) { // for every pixel in horizontal line
-            if (cliY/2-(cliY-map(distance[j],0,maxVDist,0,cliY))/2 <= i) { // if pixel is not ceiling -> wall or floor
-                if (cliY/2+(cliY-map(distance[j],0,maxVDist,0,cliY))/2 >= i) { // if pixel is not floor -> wall
-                    // draw gray shade depending on distance of wall to player
-                    if (distance[j] < maxVDist*0.25){
-                        putB(11000, fb);
-                    }
-                    else if (distance[j] < maxVDist*0.5){
-                        putB(11001, fb);
-                    }
-                    else if (distance[j] < maxVDist*0.75){
-                        putB(11002, fb);
-                    }
-                    else if (distance[j] < maxVDist){
-                        putB(11003, fb);
-                    }   
-                    else {
-                        putB(11004, fb);
-                    }
-                }
-                else { // -> pixel is floor
-                    //  draw gray shade depending on distance of floor to player
-                    if (i < cliY/2/7*1){
-                        putB(12000, fb);
-                    }
-                    else if (i < cliY/2+cliY/2/7*2){
-                        putB(12001, fb);
-                    }
-                    else if (i < cliY/2+cliY/2/7*3){
-                        putB(12002, fb);
-                    }
-                    else if (i < cliY/2+cliY/2/7*4){
-                        putB(12003, fb);
-                    }
-                    else if (i < cliY/2+cliY/2/7*5){
-                        putB(12004, fb);
-                    }
-                    else if (i < cliY/2+cliY/2/7*6){
-                        putB(12005, fb);
-                    }
-                    else {
-                        putB(12006, fb);
-                    }
-                }
-            }
-            else { // -> pixel is ceiling
-                putB(' ', fb); // empty pixel
-            }
-        }
-        putB('\n', fb); // cursor to new line after end of horizontal line 
-    } 
-}
-
-void draw_map(struct position player, struct buffer fb){
-    // draw map
-    setBCur(0, 1, fb); //reset cursor to top left corner
-    short mY1 = player.pY-(float)mapS/2;
-    mY1 = mY1 > 0 ? mY1 : 0;
-    short mY2 = mY1 == 0 ? mY1+mapS : player.pY+(float)mapS/2;
-    mY2 = mY2 < WORLDSIZE ? mY2 : WORLDSIZE;
-    mY1 = mY2 != WORLDSIZE ? mY1 : mY2-mapS;
-    short mX1 = player.pX-(float)mapS/2;
-    mX1 = mX1 > 0 ? mX1 : 0;
-    short mX2 = mX1 == 0 ? mX1+mapS : player.pX+(float)mapS/2;
-    mX2 = mX2 < WORLDSIZE ? mX2 : WORLDSIZE;
-    mX1 = mX2 != WORLDSIZE ? mX1 : mX2-mapS;
-    for (int i = 0; i < mapS+1; i++) {
-        putB('+', fb);
-        if (i != mapS) {
-            putB(' ', fb);
-        }
-    };
-    putB('\n', fb);
-    for (int i = mY1; i < mY2; i++){
-        putB('+', fb);
-        for (int j = mX1; j < mX2; j++){
-            if (j != mX1) {
-                putB(' ', fb);
-            }
-            if (lvl.world[i][j] == 1) {
-                putB('#', fb);
-            }
-            else {
-                putB(' ', fb);
-            }
-        }
-        putB('+', fb);
-        putB('\n', fb);
-    }
-    for (int i = 0; i < mapS+1; i++) {
-        putB('+', fb);
-        if (i != mapS) {
-            putB(' ', fb);
-        }
-    };
-    setBCur((int)player.pX*2-mX1*2, player.pY-mY1+2, fb);
-    switch (map(((((int)(player.pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
-        case 0:
-            putB(13000, fb);
-            break;
-        case 1:
-            putB(13001, fb);
-            break;
-        case 2:
-            putB(13002, fb);
-            break;
-        case 3:
-            putB(13003, fb);
-            break;
-        case 4:
-            putB(13004, fb);
-            break;
-        case 5:
-            putB(13005, fb);
-            break;
-        case 6:
-            putB(13006, fb);
-            break;
-        case 7:
-            putB(13007, fb);
-            break;
-    }
-}
-void draw_menu(struct buffer fb)
-{
-    clearB(fb);
-    setBCur(0, 3, fb);
-    for (int i = 0; i < 8; i++) {
-        printB((char*)logo[i], fb);
-        putB('\n', fb);
-    }
-    printB("\n\n Press SPACE to start game", fb);
-    printB("\n\n or . to exit game.", fb);
-    printB("\n\n\n\n\n\n Credits:\n", fb);
-    printB("\n Niklas Bachmann      https://github.com/alavanou", fb);
-    printB("\n Manuel Koenig        https://github.com/Xilef12000", fb);
-    printB("\n\n\n\n This Project on Github:\n", fb);
-    printB("\n https://github.com/Xilef12000/CLIQuest3D", fb);
-}
 
