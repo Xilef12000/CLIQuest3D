@@ -1,5 +1,13 @@
 #include "draw.h"
 
+int map(int x, int inMin, int inMax, int outMin, int outMax) {
+    // mapping function of one int in range to int in other range
+    int n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    if (n > outMax) n = outMax;
+    if (n < outMin) n = outMin;
+    return n;
+}
+
 void draw_3d(unsigned short *distance, struct buffer fb)
 {
     for (int i = 0; i < cliY; i++) { //for every horizontal line of output image
@@ -130,15 +138,13 @@ void draw_menu(struct buffer fb)
 {
     clearB(fb);
     setBCur(0, 3, fb);
+
     for (int i = 0; i < 8; i++) {
         printB((char*)logo[i], fb);
         putB('\n', fb);
     }
-    printB("\n\n Press SPACE to start game", fb);
-    printB("\n\n or . to exit game.", fb);
-    printB("\n\n\n\n\n\n Credits:\n", fb);
-    printB("\n Niklas Bachmann      https://github.com/alavanou", fb);
-    printB("\n Manuel Koenig        https://github.com/Xilef12000", fb);
-    printB("\n\n\n\n This Project on Github:\n", fb);
-    printB("\n https://github.com/Xilef12000/CLIQuest3D", fb);
-}
+
+    for (int i = 0; i < 8; i++) {
+        printB((char*)credits[i], fb);
+    }
+ }

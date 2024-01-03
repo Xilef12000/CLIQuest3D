@@ -67,14 +67,6 @@ struct buffer init_buffer()
     return fb;
 }
 
-int map(int x, int inMin, int inMax, int outMin, int outMax) {
-    // mapping function of one int in range to int in other range
-    int n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    if (n > outMax) n = outMax;
-    if (n < outMin) n = outMin;
-    return n;
-}
-
 struct position kb_control(struct position player_loc)
 {
     struct position new;
