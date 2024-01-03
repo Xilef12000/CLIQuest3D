@@ -6,7 +6,7 @@
 #include <wchar.h>
 #include <conio.h>
 
-int EnableVTMode()
+int initOS()
 {   
     // Set output mode to handle virtual terminal sequences
     DWORD fdwMode, fdwOldMode;
@@ -41,16 +41,19 @@ int EnableVTMode()
         ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
 
     SetConsoleMode(hStdin, fdwMode);
+    
     // Set Codepage
+    // propper font type has to be selected in terminal options manually
     UINT CP_id = 65001;
     SetConsoleOutputCP(CP_id);
     return 1;
 
+    printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
+
+
 }
 
 int getCliDim(struct buffer fb) {
-    EnableVTMode();
-    
     HANDLE hStdout;
 
     // get window size in characters

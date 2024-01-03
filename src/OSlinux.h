@@ -29,4 +29,10 @@
         {13007, "\u2197"},
     };
 
+    int initOS();
+    int getCliDim(struct buffer fb);
+    int getKeysInBuffer();
+    char getKey();
+
+
 #endif // OSLINUX_H_

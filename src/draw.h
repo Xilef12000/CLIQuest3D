@@ -11,7 +11,7 @@
         int pA; // player rotation in degree (180 = north)
     };
 
-        #define WORLDSIZE 20
+    #define WORLDSIZE 20
     struct level {
         int world[WORLDSIZE][WORLDSIZE]; // birds perspective of world (world needs a boarder!)
         struct position spawn;

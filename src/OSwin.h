@@ -29,4 +29,9 @@
         {13007, "\u2197"},
     };
 
+    int initOS();
+    int getCliDim(struct buffer fb);
+    int getKeysInBuffer();
+    char getKey();
+
 #endif // OSWIN_H_

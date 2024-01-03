@@ -16,8 +16,8 @@ int main(int argc, char const *argv[]) {
     struct position player_loc;
     player_loc = lvl.spawn;
 
-    printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
-
+    initOS();
+    
     while(loop) {
         while(getKeysInBuffer()) player_loc = kb_control(player_loc); // inBuffer > 0
         if (!isMenu){
@@ -61,6 +61,7 @@ struct buffer init_buffer()
     fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));
     fb.cur = malloc(sizeof(fb.cur));
     (*fb.cur) = 0; // avoid undefined values
+
     for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
         fb.bP[i] = 32;
     }
