@@ -44,16 +44,6 @@
     };
 
 
-    void draw_3d(unsigned short *distance, struct buffer fb);
-    void draw_map(struct position player, struct buffer fb);
-    void draw_menu(struct buffer fb);
-    
-    int map(int x, int inMin, int inMax, int outMin, int outMax);
-    void ray_cast(struct position player, unsigned short *distance);
-
-
-    
-    
     extern unsigned short isMenu;// = 1;
     extern int loop;// = 1; // loop until exit
 
@@ -78,6 +68,15 @@
     int cliX = 144; // default fallback windows size 
     int cliY = 48;
     double cliA;  // width in degrees of one character in window size
+    
+
+    void draw_3d(unsigned short distance[cliX][2], struct buffer fb);
+    void draw_map(struct position player, struct buffer fb);
+    void draw_menu(struct buffer fb);
+    
+    int map(int x, int inMin, int inMax, int outMin, int outMax);
+    void ray_cast(struct position player, unsigned short distance[cliX][2]);
+
         
     #include "draw.c"
 

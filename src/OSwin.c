@@ -46,10 +46,10 @@ int initOS()
     // propper font type has to be selected in terminal options manually
     UINT CP_id = 65001;
     SetConsoleOutputCP(CP_id);
-    return 1;
 
     printf("\e[1;1H\e[2J"); // cursor to top left of page and clear page
 
+    return 1;
 
 }
 
