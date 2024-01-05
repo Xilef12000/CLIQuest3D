@@ -30,7 +30,7 @@
     };
 
     int initOS();
-    int getCliDim(struct buffer fb);
+    int getCliDim(int *cliX, int *cliY);
     int getKeysInBuffer();
     char getKey();
 

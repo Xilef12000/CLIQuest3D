@@ -48,7 +48,6 @@
     void draw_map(struct position player, struct buffer fb);
     void draw_menu(struct buffer fb);
     
-    struct buffer init_buffer();
     int map(int x, int inMin, int inMax, int outMin, int outMax);
     struct position kb_control(struct position player);
     void ray_cast(struct position player, unsigned short *distance);

@@ -2,7 +2,15 @@
 
 int main(int argc, char const *argv[]) { 
 
-    struct buffer fb = init_buffer();
+    // get window size in characters
+    getCliDim(&cliX, &cliY);
+
+    struct buffer fb = init_buffer(&cliX, &cliY);
+    
+    cliY -= 4;
+    cliX -= 4;
+    cliA = fov / (double) cliX;
+
     
     // variables for time stats
     struct timeval tNow, tLast;
@@ -11,7 +19,7 @@ int main(int argc, char const *argv[]) {
 
     // setup array for distance to wall for each vertical display line
     unsigned short distance[cliX];
-    
+     
     // initialize player_loc position
     struct position player_loc;
     player_loc = lvl.spawn;
@@ -44,29 +52,7 @@ int main(int argc, char const *argv[]) {
     return 0;
 }
 
-struct buffer init_buffer()
-{
-    struct buffer fb;
-    fb.sY = malloc(sizeof(unsigned short));
-    fb.sX = malloc(sizeof(unsigned short));
 
-    // get window size in characters
-    if (getCliDim(fb)){
-        cliY = (*fb.sY) - 4;
-        cliX = (*fb.sX) - 4;
-    }
-    cliA = fov / (double) cliX;
-
-    // clear buffer
-    fb.bP = malloc(sizeof(unsigned short)*(*fb.sX)*(*fb.sY));
-    fb.cur = malloc(sizeof(fb.cur));
-    (*fb.cur) = 0; // avoid undefined values
-
-    for (int i = 0; i < (*fb.sX)*(*fb.sY); i++){
-        fb.bP[i] = 32;
-    }
-    return fb;
-}
 
 struct position kb_control(struct position player_loc)
 {

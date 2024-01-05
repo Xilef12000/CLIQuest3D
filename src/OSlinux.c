@@ -11,12 +11,12 @@ int initOS(){
 }
 
 
-int getCliDim(struct buffer fb) {
+int getCliDim(int *cliX, int *cliY) {
     // get window size in characters
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
-    (*fb.sY) = w.ws_row - 1;
-    (*fb.sX) = w.ws_col - 1;
+    (*cliY) = w.ws_row - 1;
+    (*cliX) = w.ws_col - 1;
     return 1;
 }
 

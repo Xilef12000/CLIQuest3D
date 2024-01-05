@@ -102,3 +102,22 @@ int displayB(struct buffer fb, struct dict *codes, unsigned short codesLen){
     setBCur(0, 0, fb);
     return 0;
 };
+
+struct buffer init_buffer(int *cliX, int *cliY)
+{
+    struct buffer fb;
+    fb.sY = malloc(sizeof(unsigned short));
+    fb.sX = malloc(sizeof(unsigned short));
+
+    (*fb.sY) = *cliY;
+    (*fb.sX) = *cliX;
+    // clear buffer
+    fb.bP = malloc(sizeof(unsigned short)*(*cliX)*(*cliY));
+    fb.cur = malloc(sizeof(fb.cur));
+    (*fb.cur) = 0; // avoid undefined values
+
+    for (int i = 0; i < (*cliX)*(*cliY); i++){
+        fb.bP[i] = 32;
+    }
+    return fb;
+}

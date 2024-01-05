@@ -53,7 +53,7 @@ int initOS()
 
 }
 
-int getCliDim(struct buffer fb) {
+int getCliDim(int *cliX, int *cliY) {
     HANDLE hStdout;
 
     // get window size in characters
@@ -68,8 +68,8 @@ int getCliDim(struct buffer fb) {
     // Set srctWindow to the current window size and location.
     srctWindow = csbiInfo.srWindow;
 
-    (*fb.sX) = srctWindow.Right - srctWindow.Left;
-    (*fb.sY) = srctWindow.Bottom - srctWindow.Top;
+    (*cliX) = srctWindow.Right - srctWindow.Left;
+    (*cliY) = srctWindow.Bottom - srctWindow.Top;
 
     return 1;
 }
