@@ -7,4 +7,6 @@
     #include "draw.h"
     #include "gamecontrol.c"
 
+    struct position kb_control(struct position player_loc);
+
 #endif //GAMECONTROL_H_

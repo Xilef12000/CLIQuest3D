@@ -49,14 +49,18 @@
     void draw_menu(struct buffer fb);
     
     int map(int x, int inMin, int inMax, int outMin, int outMax);
-    struct position kb_control(struct position player);
     void ray_cast(struct position player, unsigned short *distance);
 
 
-    // menu
+    
+    
     extern unsigned short isMenu;// = 1;
     extern int loop;// = 1; // loop until exit
 
+    unsigned short isMenu = 1;
+    int loop = 1; // loop until exit
+
+    // extern variables unchanged during game loop
     extern const unsigned short mapS;// = 10; // minimap size // must be smaller then WORLDSIZE
     extern const short fov;// = 90; //set field of view to 90 degree
     extern const short maxVDist;// = 20; //set max viewing distran
@@ -65,9 +69,6 @@
     extern int cliX;// = 144; // default fallback windows size 
     extern int cliY;// = 48;
     extern double cliA;  // width in degrees of one character in window size
-
-    unsigned short isMenu = 1;
-    int loop = 1; // loop until exit
 
     const unsigned short mapS = 10; // minimap size // must be smaller then WORLDSIZE
     const short fov = 90; //set field of view to 90 degree
