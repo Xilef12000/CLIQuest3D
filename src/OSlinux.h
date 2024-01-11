@@ -5,7 +5,7 @@
     #include "OSlinux.c"
     #include "framebuffer.h"
 
-    #define UNILEN 20
+    #define UNILEN 22
     struct dict codes[UNILEN] = {
         {11000, "\u2588"},
         {11001, "\u2593"},
