@@ -5,9 +5,9 @@
     #include "OSwin.c"
     #include "framebuffer.h"
 
-    #define UNILEN 20
+    #define UNILEN 22
     struct dict codes[UNILEN] = {
-        {11000, "\u25D9"},
+        {11000, "\u2588"},
         {11001, "\u2593"},
         {11002, "\u2592"},
         {11003, "\u2591"},
@@ -19,6 +19,8 @@
         {12004, "\x3D"},
         {12005, "\u2261"},
         {12006, "\u2261"},
+        {12007, "\u25D9"}, //wall goal
+        {12008, "\u2592"},  // wall removable
         {13000, "\u2191"},
         {13001, "\u2196"},
         {13002, "\u2190"},

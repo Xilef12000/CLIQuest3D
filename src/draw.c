@@ -22,7 +22,10 @@ void draw_3d(unsigned short distance[cliX][2], struct buffer fb)
                             putB(11000, fb);
                             break;
                         case 2:
-                            putB(11000, fb);
+                            putB(12007, fb);
+                            break;
+                        case 3:
+                            putB(12008, fb);
                             break;
                         } 
                     }
@@ -98,7 +101,7 @@ void draw_map(struct position player, struct buffer fb){
             if (j != mX1) {
                 putB(' ', fb);
             }
-            if (lvl.world[i][j] == 1) {
+            if (lvl.world[i][j] > 0) {
                 putB('#', fb);
             }
             else {
@@ -178,7 +181,7 @@ void ray_cast(struct position player_loc, unsigned short distance[cliX][2]){
         float sy = y1<y2 ? 0.1 : -0.1; // direction of y delta -> y step
         float err = dx+dy, e2;
 
-        int iswall = lvl.world[(int)x1][(int)y1];
+        unsigned short iswall = lvl.world[(int)x1][(int)y1];
         while (iswall == 0) {
             iswall = lvl.world[(int)x1][(int)y1];
 
@@ -197,8 +200,8 @@ void ray_cast(struct position player_loc, unsigned short distance[cliX][2]){
             
         }
 
-        distance[i][0] = l/10; // safe distance to wall (number of necessary steps)
         distance[i][1] = iswall; //walltype
+        distance[i][0] = l/10; // safe distance to wall (number of necessary steps)
 
     }
 }
