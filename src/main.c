@@ -18,7 +18,9 @@ int main(int argc, char const *argv[]) {
     gettimeofday(&tLast, NULL);
 
     // setup array for distance to wall for each vertical display line
-    unsigned short distance[cliX][2];
+    //unsigned short distance[cliX][2];
+    struct distance *distance;
+    distance = malloc(cliX*sizeof(struct distance));
      
     // initialize player_loc position
     struct position player_loc;

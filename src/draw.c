@@ -8,15 +8,15 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     return n;
 }
 
-void draw_3d(unsigned short distance[cliX][2], struct buffer fb)
+void draw_3d(struct distance *distance, struct buffer fb)
 {
     for (int i = 0; i < cliY; i++) { //for every horizontal line of output image
         for (int j = cliX-1; j >= 0; j--) { // for every pixel in horizontal line
-            if (cliY/2-(cliY-map(distance[j][0],0,maxVDist,0,cliY))/2 <= i) { // if pixel is not ceiling -> wall or floor
-                if (cliY/2+(cliY-map(distance[j][0],0,maxVDist,0,cliY))/2 >= i) { // if pixel is not floor -> wall
+            if (cliY/2-(cliY-map(distance[j].distance,0,maxVDist,0,cliY))/2 <= i) { // if pixel is not ceiling -> wall or floor
+                if (cliY/2+(cliY-map(distance[j].distance,0,maxVDist,0,cliY))/2 >= i) { // if pixel is not floor -> wall
                     // draw gray shade depending on distance of wall to player
-                    if (distance[j][0] < maxVDist*0.25){
-                        switch (distance[j][1])
+                    if (distance[j].distance < maxVDist*0.25){
+                        switch (distance[j].walltype)
                         {
                         case 1:
                             putB(11000, fb);
@@ -29,13 +29,13 @@ void draw_3d(unsigned short distance[cliX][2], struct buffer fb)
                             break;
                         } 
                     }
-                    else if (distance[j][0] < maxVDist*0.5){
+                    else if (distance[j].distance < maxVDist*0.5){
                         putB(11001, fb);
                     }
-                    else if (distance[j][0] < maxVDist*0.75){
+                    else if (distance[j].distance < maxVDist*0.75){
                         putB(11002, fb);
                     }
-                    else if (distance[j][0] < maxVDist){
+                    else if (distance[j].distance < maxVDist){
                         putB(11003, fb);
                     }   
                     else {
@@ -160,18 +160,18 @@ void draw_menu(struct buffer fb)
     }
  }
 
-void ray_cast(struct position player_loc, unsigned short distance[cliX][2]){
+void ray_cast(struct position player, struct distance *distance){
     // ray casting:
-    // draw lines from player_loc in every direction in view
+    // draw lines from player in every direction in view
     // lines can only be drawn between between to points
-    // point one: player_loc, and point two a pointer outside of world so it can never be reached
+    // point one: player, and point two a pointer outside of world so it can never be reached
     // the line is drawn in small steps from the first to the second point
     for (int i = 0; i < cliX; i++) {
         float l = 0; // line step counter
-        float x1 = player_loc.pY; // point one = player_loc position
-        float y1 = player_loc.pX;
+        float x1 = player.pY; // point one = player position
+        float y1 = player.pX;
         // line degree in radiens (looking direction - half pov + line offset)
-        float srad = (((player_loc.pA - (double) fov / 2) + (i * cliA)) * M_PI) / 180;
+        float srad = (((player.pA - (double) fov / 2) + (i * cliA)) * M_PI) / 180;
         float y2 = y1+(sin(srad)*WORLDSIZE+1); // calculate point two
         float x2 = x1+(cos(srad)*WORLDSIZE+1);
 
@@ -200,8 +200,8 @@ void ray_cast(struct position player_loc, unsigned short distance[cliX][2]){
             
         }
 
-        distance[i][1] = iswall; //walltype
-        distance[i][0] = l/10; // safe distance to wall (number of necessary steps)
+        distance[i].distance = l/10; // safe distance to wall (number of necessary steps)
+        distance[i].walltype = iswall; //walltype
 
     }
 }

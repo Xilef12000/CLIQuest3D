@@ -43,6 +43,13 @@
         10, 10, 180
     };
 
+    struct distance
+    {
+        unsigned short distance;
+        unsigned short walltype;
+    };
+    
+
 
     extern unsigned short isMenu;// = 1;
     extern int loop;// = 1; // loop until exit
@@ -70,12 +77,12 @@
     double cliA;  // width in degrees of one character in window size
     
 
-    void draw_3d(unsigned short distance[cliX][2], struct buffer fb);
+    void draw_3d(struct distance *distance, struct buffer fb);
     void draw_map(struct position player, struct buffer fb);
     void draw_menu(struct buffer fb);
     
     int map(int x, int inMin, int inMax, int outMin, int outMax);
-    void ray_cast(struct position player, unsigned short distance[cliX][2]);
+    void ray_cast(struct position player, struct distance *distance);
 
         
     #include "draw.c"
