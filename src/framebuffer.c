@@ -10,6 +10,7 @@ struct buffer {
     unsigned long *cur;
     unsigned short *bP;
 };
+
 struct dict {
     unsigned short i;
     char *s;
@@ -21,16 +22,19 @@ int checkBCur(struct buffer fb){
     }
     return 0;
 };
+
 int setBCur(int x, int y, struct buffer fb){
     *fb.cur = (*fb.sX)*y+x;
     checkBCur(fb);
     return 0;
 };
+
 int moveBCur(int n, struct buffer fb){
     *fb.cur += n;
     checkBCur(fb);
     return 0;
 };
+
 int placeB(unsigned short c, int x, int y, struct buffer fb){
     if (x >= 0 && y >= 0) {
         setBCur(x, y, fb);
@@ -50,9 +54,11 @@ int placeB(unsigned short c, int x, int y, struct buffer fb){
     }
     return 0;
 };
+
 int putB(unsigned short c, struct buffer fb){
     return placeB(c, -1, -1, fb);   
 };
+
 int printB(char s[], struct buffer fb){
     int n;
     for (int i = 0; i < strlen(s); i++) {
@@ -60,6 +66,7 @@ int printB(char s[], struct buffer fb){
     }
     return n;
 };
+
 int clearB(struct buffer fb){
     setBCur(0, 0, fb);
     for (int i = 0; i < (*fb.sX)*(*fb.sY); i++) {
@@ -67,6 +74,7 @@ int clearB(struct buffer fb){
     }
     return 0;
 };
+
 int fprintB(struct buffer fb, const char *format, ...){
     va_list args0;
     va_start(args0, format);
@@ -80,6 +88,7 @@ int fprintB(struct buffer fb, const char *format, ...){
     printB(str, fb);
     return(0);
 };
+
 int displayB(struct buffer fb, struct dict *codes, unsigned short codesLen){
     printf("\e[1;1H"); // cursor to top left
     for (int i = 0; i < (*fb.sY); i++){
@@ -102,3 +111,23 @@ int displayB(struct buffer fb, struct dict *codes, unsigned short codesLen){
     setBCur(0, 0, fb);
     return 0;
 };
+
+struct buffer init_buffer(int *cliX, int *cliY)
+{
+    struct buffer fb;
+    fb.sY = malloc(sizeof(unsigned short));
+    fb.sX = malloc(sizeof(unsigned short));
+
+    (*fb.sY) = *cliY;
+    (*fb.sX) = *cliX;
+
+    // clear buffer
+    fb.bP = malloc(sizeof(unsigned short)*(*cliX)*(*cliY));
+    fb.cur = malloc(sizeof(fb.cur));
+    (*fb.cur) = 0; // avoid undefined values
+
+    for (int i = 0; i < (*cliX)*(*cliY); i++){
+        fb.bP[i] = 32;
+    }
+    return fb;
+}
