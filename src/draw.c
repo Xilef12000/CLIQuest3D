@@ -247,7 +247,7 @@ void draw_shoot(struct buffer fb){
             if (x >= 0 && x <= cliX-1 && y >= 1 && y <=cliY){
                 if (sqrtf(powf(x1-x0, 2)+ powf(y1-y0, 2)) >= radius_inner){
                     setBCur(x, y, fb);
-                    fprintB(fb, "#");
+                    putB(14000, fb);
                 }
             }
             else {
