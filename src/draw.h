@@ -52,9 +52,13 @@
 
 
     extern unsigned short isMenu;// = 1;
+    extern unsigned short shoot;// = 0;
+    extern unsigned short shoot_dur;// = 0;
     extern int loop;// = 1; // loop until exit
 
     unsigned short isMenu = 1;
+    unsigned short shoot = 0;
+    unsigned short shoot_dur = 0;
     int loop = 1; // loop until exit
 
     // extern variables unchanged during game loop
@@ -85,6 +89,7 @@
     void ray_cast(struct position player, struct distance *distance);
 
     void draw_fps(struct buffer fb, float time, float fps, unsigned long frame);
+    void draw_shoot(struct buffer fb);
 
     #include "draw.c"
 

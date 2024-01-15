@@ -36,6 +36,10 @@ int main(int argc, char const *argv[]) {
             setBCur(0, 1, fb);
 
             draw_3d(distance, fb);
+            if (shoot > 0){
+                draw_shoot(fb);
+                shoot--;
+            } 
             draw_map(player_loc, fb);
 
             calc_fps(fb);

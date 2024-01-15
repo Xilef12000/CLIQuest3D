@@ -25,6 +25,10 @@ struct position kb_control(struct position player_loc)
             case 'd':
                 player_loc.pA-=stepA;
                 break;
+            case 'e':
+                shoot = 1.0/((float) tTaken / 1000)*100;
+                shoot_dur = shoot;
+                break;
             case  '.':
                 isMenu = 1;
                 break;
