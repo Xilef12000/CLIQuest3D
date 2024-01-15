@@ -1,4 +1,5 @@
 #include "gamecontrol.h"
+#include "draw.h"
 
 struct position kb_control(struct position player_loc)
 {
@@ -48,4 +49,18 @@ struct position kb_control(struct position player_loc)
         player_loc.pY = new.pY;
     }
     return player_loc;
+}
+
+void start_fps() {
+    // variables for time stats
+    frame = 0;
+    gettimeofday(&tLast, NULL);
+}
+void calc_fps(struct buffer fb) {
+    // calculate and output time stats
+    gettimeofday(&tNow, NULL);
+    tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
+    draw_fps(fb, (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame);
+    tLast = tNow;
+    frame++;
 }

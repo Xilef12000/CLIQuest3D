@@ -84,7 +84,8 @@
     int map(int x, int inMin, int inMax, int outMin, int outMax);
     void ray_cast(struct position player, struct distance *distance);
 
-        
+    void draw_fps(struct buffer fb, float time, float fps, unsigned long frame);
+
     #include "draw.c"
 
 

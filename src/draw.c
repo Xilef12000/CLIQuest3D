@@ -205,3 +205,8 @@ void ray_cast(struct position player, struct distance *distance){
 
     }
 }
+
+void draw_fps(struct buffer fb, float time, float fps, unsigned long frame){
+    setBCur(0, cliY+2, fb);
+    fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", time, fps, frame); 
+}
