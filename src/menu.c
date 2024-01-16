@@ -9,12 +9,30 @@ const char logo[8][86] = {
     {"                                                                 \\______/ \\_______/  "},
     };
 
-const char credits[8][80] = {
+const char credits[9][80] = {
     {"\n\n Press SPACE to start game"},
     {"\n\n or . to exit game."},
+    {"\n\n Press T for a tutorial on how to play the game."},
     {"\n\n\n\n\n\n Credits:\n"},
     {"\n Niklas Bachmann      https://github.com/alavanou"},
     {"\n Manuel Koenig        https://github.com/Xilef12000"},
     {"\n\n\n\n This Project on Github:\n"},
     {"\n https://github.com/Xilef12000/CLIQuest3D"},
+};
+
+
+const char tutorial[13][80] = {
+    {"\n\n Press T to return to the main screen."},
+    {"\n\n How To Play:"},
+    {"\n\n Keybindings:\n"},
+    {"\n Walk forward: W"},
+    {"\n Walk backward: s"},
+    {"\n Turn left: A"},
+    {"\n Turn right: D"},
+    {"\n Shoot: E"},
+    {"\n Pause Game: ."},
+    {"\n\n Your Goal: Find and look at this wall type:"},
+    {"^"},
+    {"\n Walls of this type can be shot away:"},
+    {"&"},
 };
