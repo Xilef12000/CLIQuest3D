@@ -32,6 +32,7 @@ void draw_3d(struct distance *distance, struct buffer fb)
                         switch (distance[j].walltype)
                         {
                         case 1:
+                        default:
                             putB(11000, fb);
                             break;
                         case 2:
