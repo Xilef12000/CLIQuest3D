@@ -131,6 +131,7 @@ void draw_map(struct position player, struct buffer fb){
             putB(' ', fb);
         }
     };
+    draw_shoot_cooldown(fb);
     setBCur((int)player.pX*2-mX1*2, player.pY-mY1+2, fb);
     switch (map(((((int)(player.pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
         case 0:
@@ -275,6 +276,20 @@ void draw_shoot(struct buffer fb){
                 y1 += sy;
             }  
             
+        }
+    }
+}
+void draw_shoot_cooldown(struct buffer fb){
+    if (shoot_cool > 0){
+        putB('\n', fb);
+        unsigned short n = map(shoot + shoot_cool, 0, shoot_dur*(shoot_factor+1), 0, mapS*2+1);
+        for (unsigned short i = 0; i < mapS*2+1; i++){
+            if (i < n){
+                putB('=', fb);
+            }
+            else {
+                putB(' ', fb);
+            }
         }
     }
 }

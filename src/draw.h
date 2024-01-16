@@ -54,11 +54,15 @@
     extern unsigned short isMenu;// = 1;
     extern unsigned short shoot;// = 0;
     extern unsigned short shoot_dur;// = 0;
+    extern unsigned short shoot_cool;// = 0;
+    extern const unsigned short shoot_factor;// = 4
     extern int loop;// = 1; // loop until exit
 
     unsigned short isMenu = 1;
     unsigned short shoot = 0;
     unsigned short shoot_dur = 0;
+    unsigned short shoot_cool = 0;
+    const unsigned short shoot_factor = 4;
     int loop = 1; // loop until exit
 
     // extern variables unchanged during game loop
@@ -90,6 +94,7 @@
 
     void draw_fps(struct buffer fb, float time, float fps, unsigned long frame);
     void draw_shoot(struct buffer fb);
+    void draw_shoot_cooldown(struct buffer fb);
 
     #include "draw.c"
 

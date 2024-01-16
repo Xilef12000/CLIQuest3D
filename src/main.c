@@ -39,7 +39,10 @@ int main(int argc, char const *argv[]) {
             if (shoot > 0){
                 draw_shoot(fb);
                 shoot--;
-            } 
+            }
+            else if (shoot_cool > 0) {
+                shoot_cool--;
+            }
             draw_map(player_loc, fb);
 
             calc_fps(fb);
