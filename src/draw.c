@@ -1,5 +1,6 @@
 #include "draw.h"
 #include <math.h>
+#include <stdlib.h>
 
 int map(int x, int inMin, int inMax, int outMin, int outMax) {
     // mapping function of one int in range to int in other range
@@ -14,6 +15,10 @@ float mapf(float x, float inMin, float inMax, float outMin, float outMax) {
     if (n > outMax) n = outMax;
     if (n < outMin) n = outMin;
     return n;
+}
+float pythf(float a, float b){
+    // Pythagorean theorem
+    return (sqrtf(powf(a, 2) + powf(b, 2)));
 }
 
 void draw_3d(struct distance *distance, struct buffer fb)
@@ -221,10 +226,10 @@ void draw_fps(struct buffer fb, float time, float fps, unsigned long frame){
 
 void draw_shoot(struct buffer fb){
     // some raycasting to draw circle;
-    float radius = sqrtf(powf(cliX-4,2)+powf(cliY-4,2))*mapf(shoot, shoot_dur, 0.0, 0.0, 1.0)*2;
+    float radius = pythf(cliX-4, cliY-4)*mapf(shoot, shoot_dur, 0.0, 0.0, 1.0)*2;
     float radius_inner = 0;
     if (shoot < shoot_dur/2){
-        radius_inner = sqrtf(powf(cliX-4,2)+powf(cliY-4,2))*mapf(shoot, shoot_dur/2, 0.0, 0.0, 1.0)/2;
+        radius_inner = pythf(cliX-4, cliY-4)*mapf(shoot, (float)shoot_dur/2, 0.0, 0.0, 1.0)/2;
     }
     
     for (int i = 0; i < 720; i++) {
@@ -241,13 +246,13 @@ void draw_shoot(struct buffer fb){
         float dy = -fabs(y2 - y1); // delta between y1 and y2
         float sy = y1<y2 ? 1 : -1; // direction of y delta -> y step
         float err = dx+dy, e2;
-        while (sqrtf(powf(x1-x0, 2)+ powf(y1-y0, 2)) <= radius) {
+        while (pythf((x1-x0)/2, y1-y0) <= radius) {
             int x = (int)x1;
             int y = (int)y1;
             if (x >= 0 && x <= cliX-1 && y >= 1 && y <=cliY){
-                if (sqrtf(powf(x1-x0, 2)+ powf(y1-y0, 2)) >= radius_inner){
+                if (pythf((x1-x0)/2, y1-y0) >= radius_inner){
                     setBCur(x, y, fb);
-                    putB(14000, fb);
+                    putB(14000 + rand() % 4, fb);
                 }
             }
             else {
