@@ -15,6 +15,7 @@
     struct level {
         int world[WORLDSIZE][WORLDSIZE]; // birds perspective of world (world needs a boarder!)
         struct position spawn;
+        short ammo;
     };
 
     struct level lvl = { // current level lvl
@@ -40,7 +41,7 @@
             {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
         }, 
-        10, 10, 180
+        10, 10, 180, 4
     };
 
     struct distance
@@ -94,7 +95,7 @@
 
     void draw_fps(struct buffer fb, float time, float fps, unsigned long frame);
     void draw_shoot(struct buffer fb);
-    void draw_shoot_cooldown(struct buffer fb);
+    void draw_shoot_stats(struct buffer fb);
 
     #include "draw.c"
 
