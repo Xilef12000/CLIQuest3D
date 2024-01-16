@@ -212,6 +212,9 @@ void ray_cast(struct position player, struct distance *distance){
             }  
             
         }
+        if (i == cliX/2 && shoot > 0 && shoot == shoot_dur && lvl.world[(int)x1][(int)y1] == 3){
+            lvl.world[(int)x1][(int)y1] = 0; // if center line AND shoot AND shootable wall THEN replace wall
+        }
 
         distance[i].distance = l/10; // safe distance to wall (number of necessary steps)
         distance[i].walltype = iswall; //walltype
