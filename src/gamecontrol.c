@@ -52,6 +52,17 @@ struct position kb_control(struct position player_loc)
             case ' ':
                 isMenu = 0;
                 break;
+            case 't':
+                switch (isMenu) {
+                    case 99:
+                    default:
+                        isMenu = 1;
+                        break;
+                    case 1:
+                        isMenu = 99;
+                        break;
+                }
+                break;
         }
     }
     // check if theoretical new position is not in wall -> write it to current position

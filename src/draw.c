@@ -164,14 +164,37 @@ void draw_menu(struct buffer fb)
 {
     clearB(fb);
     setBCur(0, 3, fb);
-
     for (int i = 0; i < 8; i++) {
         printB((char*)logo[i], fb);
         putB('\n', fb);
     }
-
-    for (int i = 0; i < 8; i++) {
-        printB((char*)credits[i], fb);
+    if (isMenu == 99){
+        for (int i = 0; i < 13; i++) {
+            if (strcmp(tutorial[i], "^") == 0){
+                for (int n = 0; n < 3; n++) {
+                    fprintB(fb, "\n ");
+                    for (int m = 0; m < 5; m++) {
+                        putB(12007, fb);
+                    }
+                }
+            }
+            else if (strcmp(tutorial[i], "&") == 0){
+                for (int n = 0; n < 3; n++) {
+                    fprintB(fb, "\n ");
+                    for (int m = 0; m < 5; m++) {
+                        putB(12008, fb);
+                    }
+                }
+            }
+            else {
+                printB((char*)tutorial[i], fb);
+            }
+        }
+    }
+    else {
+        for (int i = 0; i < 9; i++) {
+            printB((char*)credits[i], fb);
+        }
     }
  }
 
