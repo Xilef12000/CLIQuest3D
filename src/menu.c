@@ -22,9 +22,9 @@ const char credits[9][80] = {
 
 
 const char tutorial[13][80] = {
-    {"\n\n Press T to return to the main screen."},
-    {"\n\n How To Play:"},
-    {"\n\n Keybindings:\n"},
+    {"\n\n Press T to return to the main screen.\n"},
+    {"\n How To Play:\n"},
+    {"\n Keybindings:"},
     {"\n Walk forward: W"},
     {"\n Walk backward: s"},
     {"\n Turn left: A"},

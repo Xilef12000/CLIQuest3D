@@ -171,17 +171,17 @@ void draw_menu(struct buffer fb)
     if (isMenu == 99){
         for (int i = 0; i < 13; i++) {
             if (strcmp(tutorial[i], "^") == 0){
-                for (int n = 0; n < 5; n++) {
+                for (int n = 0; n < 3; n++) {
                     fprintB(fb, "\n ");
-                    for (int m = 0; m < 10; m++) {
+                    for (int m = 0; m < 5; m++) {
                         putB(12007, fb);
                     }
                 }
             }
             else if (strcmp(tutorial[i], "&") == 0){
-                for (int n = 0; n < 5; n++) {
+                for (int n = 0; n < 3; n++) {
                     fprintB(fb, "\n ");
-                    for (int m = 0; m < 10; m++) {
+                    for (int m = 0; m < 5; m++) {
                         putB(12008, fb);
                     }
                 }
