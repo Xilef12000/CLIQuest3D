@@ -1,4 +1,6 @@
 #include "draw.h"
+#include <math.h>
+#include <stdlib.h>
 
 int map(int x, int inMin, int inMax, int outMin, int outMax) {
     // mapping function of one int in range to int in other range
@@ -6,6 +8,17 @@ int map(int x, int inMin, int inMax, int outMin, int outMax) {
     if (n > outMax) n = outMax;
     if (n < outMin) n = outMin;
     return n;
+}
+float mapf(float x, float inMin, float inMax, float outMin, float outMax) {
+    // mapping function of one int in range to int in other range
+    float n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    if (n > outMax) n = outMax;
+    if (n < outMin) n = outMin;
+    return n;
+}
+float pythf(float a, float b){
+    // Pythagorean theorem
+    return (sqrtf(powf(a, 2) + powf(b, 2)));
 }
 
 void draw_3d(struct distance *distance, struct buffer fb)
@@ -19,6 +32,7 @@ void draw_3d(struct distance *distance, struct buffer fb)
                         switch (distance[j].walltype)
                         {
                         case 1:
+                        default:
                             putB(11000, fb);
                             break;
                         case 2:
@@ -117,6 +131,7 @@ void draw_map(struct position player, struct buffer fb){
             putB(' ', fb);
         }
     };
+    draw_shoot_stats(fb);
     setBCur((int)player.pX*2-mX1*2, player.pY-mY1+2, fb);
     switch (map(((((int)(player.pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
         case 0:
@@ -199,9 +214,98 @@ void ray_cast(struct position player, struct distance *distance){
             }  
             
         }
+        if (i == cliX/2 && shoot > 0 && shoot == shoot_dur && lvl.world[(int)x1][(int)y1] == 3){
+            lvl.world[(int)x1][(int)y1] = 0; // if center line AND shoot AND shootable wall THEN replace wall
+        }
 
         distance[i].distance = l/10; // safe distance to wall (number of necessary steps)
         distance[i].walltype = iswall; //walltype
 
     }
+}
+
+void draw_fps(struct buffer fb, float time, float fps, unsigned long frame){
+    setBCur(0, cliY+2, fb);
+    fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", time, fps, frame); 
+}
+
+void draw_shoot(struct buffer fb){
+    // some raycasting to draw circle;
+    float radius = pythf(cliX-4, cliY-4)*mapf(shoot, shoot_dur, 0.0, 0.0, 1.0)*2;
+    float radius_inner = 0;
+    if (shoot < shoot_dur/2){
+        radius_inner = pythf(cliX-4, cliY-4)*mapf(shoot, (float)shoot_dur/2, 0.0, 0.0, 1.0)/2;
+    }
+    
+    for (int i = 0; i < 720; i++) {
+        float x0 = (float)cliX/2;
+        float y0 = (float)cliY/2;
+        float x1 = x0; // point one = screne center
+        float y1 = y0;
+        float srad = ((float)i/2 * M_PI) / 180;
+        float y2 = y1+(sin(srad)*radius); // calculate point two
+        float x2 = x1+(cos(srad)*radius);
+
+        float dx =  fabs(x2 - x1); // delta between x1 and x2
+        float sx = x1<x2 ? 1 : -1; // direction of x delta -> x step
+        float dy = -fabs(y2 - y1); // delta between y1 and y2
+        float sy = y1<y2 ? 1 : -1; // direction of y delta -> y step
+        float err = dx+dy, e2;
+        while (pythf((x1-x0)/2, y1-y0) <= radius) {
+            int x = (int)x1;
+            int y = (int)y1;
+            if (x >= 0 && x <= cliX-1 && y >= 1 && y <=cliY){
+                if (pythf((x1-x0)/2, y1-y0) >= radius_inner){
+                    setBCur(x, y, fb);
+                    putB(14000 + rand() % 4, fb);
+                }
+            }
+            else {
+                break;
+            }
+
+            e2 = 2*err;
+
+            // determine if this step should be done on x or y axis -> increase error (difference to ideal line) and make step 
+            if (e2 >= dy) {
+                err += dy; 
+                x1 += sx;
+            }
+            if (e2 <= dx) {
+                err += dx; 
+                y1 += sy;
+            }  
+            
+        }
+    }
+}
+void draw_shoot_stats(struct buffer fb){
+    putB('\n', fb);
+    if (lvl.ammo >= 0){
+        fprintB(fb, "Ammo: %-*d", mapS*2-5, lvl.ammo);
+        if (shoot_cool > 0){
+            putB('\n', fb);
+            unsigned short n = map(shoot + shoot_cool, 0, shoot_dur*(shoot_factor+1), 0, mapS*2+1);
+            for (unsigned short i = 0; i < mapS*2+1; i++){
+                if (i < n){
+                    putB('=', fb);
+                }
+                else {
+                    putB(' ', fb);
+                }
+            }
+        }
+    }
+    else {
+        fprintB(fb, "Ammo: %-*d", mapS*2-5, 0);
+        if (shoot_cool > 0){
+            putB('\n', fb);
+            putB('-', fb);
+            for (unsigned short i = 0; i < mapS*2-1; i++){
+                putB(' ', fb);
+            }
+            putB('-', fb);
+        }
+    }
+
 }

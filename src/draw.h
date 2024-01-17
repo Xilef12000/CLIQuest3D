@@ -15,6 +15,7 @@
     struct level {
         int world[WORLDSIZE][WORLDSIZE]; // birds perspective of world (world needs a boarder!)
         struct position spawn;
+        short ammo;
     };
 
     struct level lvl = { // current level lvl
@@ -40,7 +41,7 @@
             {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
         }, 
-        10, 10, 180
+        10, 10, 180, 4
     };
 
     struct distance
@@ -52,9 +53,17 @@
 
 
     extern unsigned short isMenu;// = 1;
+    extern unsigned short shoot;// = 0;
+    extern unsigned short shoot_dur;// = 0;
+    extern unsigned short shoot_cool;// = 0;
+    extern const unsigned short shoot_factor;// = 4
     extern int loop;// = 1; // loop until exit
 
     unsigned short isMenu = 1;
+    unsigned short shoot = 0;
+    unsigned short shoot_dur = 0;
+    unsigned short shoot_cool = 0;
+    const unsigned short shoot_factor = 4;
     int loop = 1; // loop until exit
 
     // extern variables unchanged during game loop
@@ -84,7 +93,10 @@
     int map(int x, int inMin, int inMax, int outMin, int outMax);
     void ray_cast(struct position player, struct distance *distance);
 
-        
+    void draw_fps(struct buffer fb, float time, float fps, unsigned long frame);
+    void draw_shoot(struct buffer fb);
+    void draw_shoot_stats(struct buffer fb);
+
     #include "draw.c"
 
 
