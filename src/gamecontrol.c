@@ -29,8 +29,9 @@ struct position kb_control(struct position player_loc)
                 if (shoot_cool == 0){
                     lvl.ammo--;
                     shoot = 1.0/((float) tTaken / 1000)*100;
+                    shoot_cool = shoot*shoot_factor + 2;
+                    shoot += 10;
                     shoot_dur = shoot;
-                    shoot_cool = shoot*shoot_factor;
                     if (lvl.ammo < 0) {
                         lvl.ammo = -1;
                         shoot = 0;
