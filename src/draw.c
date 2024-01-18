@@ -37,6 +37,9 @@ void draw_3d(struct distance *distance, struct buffer fb)
                             break;
                         case 2:
                             putB(12007, fb);
+                            // check for goal
+                            if (j > cliX/3 && j < cliX*2/3 && distance[j].distance < maxVDist*0.1)
+                                {isMenu = 1;}
                             break;
                         case 3:
                             putB(12008, fb);
