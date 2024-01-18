@@ -5,7 +5,7 @@
     #include "OSwin.c"
     #include "framebuffer.h"
 
-    #define UNILEN 22
+    #define UNILEN 26
     struct dict codes[UNILEN] = {
         {11000, "\u2588"},
         {11001, "\u2593"},
@@ -29,6 +29,10 @@
         {13005, "\u2198"},
         {13006, "\u2192"},
         {13007, "\u2197"},
+        {14000, "*"},
+        {14001, "#"},
+        {14002, "^"},
+        {14003, "$"},
     };
 
     int initOS();

@@ -10,12 +10,8 @@ int main(int argc, char const *argv[]) {
     cliY -= 4;
     cliX -= 4;
     cliA = fov / (double) cliX;
-
     
-    // variables for time stats
-    struct timeval tNow, tLast;
-    unsigned long tTaken, frame = 0;
-    gettimeofday(&tLast, NULL);
+    start_fps();
 
     // setup array for distance to wall for each vertical display line
     struct distance *distance;
@@ -39,15 +35,16 @@ int main(int argc, char const *argv[]) {
             setBCur(0, 1, fb);
 
             draw_3d(distance, fb);
+            if (shoot > 0){
+                draw_shoot(fb);
+                shoot--;
+            }
+            else if (shoot_cool > 0) {
+                shoot_cool--;
+            }
             draw_map(player_loc, fb);
 
-            // calculate and output time stats
-            gettimeofday(&tNow, NULL);
-            tTaken = (tNow.tv_sec - tLast.tv_sec) * 1000000 + tNow.tv_usec - tLast.tv_usec;
-            setBCur(0, cliY+2, fb);
-            fprintB(fb, "time: %10.4f ms; fps: %10.0f; frame: %10.0lu; \n", (float) tTaken / 1000, (float) 1.0/tTaken*1000000, frame); 
-            tLast = tNow;
-            frame++;
+            calc_fps(fb);
         }
 
         else draw_menu(fb);
