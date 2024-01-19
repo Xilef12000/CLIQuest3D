@@ -19,6 +19,7 @@ int main(int argc, char const *argv[]) {
      
     // initialize player_loc position
     struct position player_loc;
+    lvl = level1;
     player_loc = lvl.spawn;
 
     initOS();

@@ -194,7 +194,7 @@ void draw_menu(struct buffer fb)
             }
         }
     }
-    if (isMenu == 2){
+    else if (isMenu == 2){
         for (int i = 0; i < 8; i++)
             printB((char*)win[i], fb);
     }

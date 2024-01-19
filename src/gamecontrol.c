@@ -43,6 +43,14 @@ struct position kb_control(struct position player_loc)
                 isMenu = 1;
                 break;
         }
+        // check if theoretical new position is not in wall -> write it to current position
+        // separate check for walk along wall
+        if(lvl.world[(int)(player_loc.pY)][(int)new.pX] == 0) {
+            player_loc.pX = new.pX;
+        }
+        if(lvl.world[(int)(new.pY)][(int)player_loc.pX] == 0) {
+            player_loc.pY = new.pY;
+        }
     }
     else {
         switch (key) {
@@ -50,6 +58,8 @@ struct position kb_control(struct position player_loc)
                 loop = 0;
                 break;
             case ' ':
+                lvl = level1;
+                player_loc = lvl.spawn;
                 isMenu = 0;
                 break;
             case 't':
@@ -64,14 +74,6 @@ struct position kb_control(struct position player_loc)
                 }
                 break;
         }
-    }
-    // check if theoretical new position is not in wall -> write it to current position
-    // separate check for walk along wall
-    if(lvl.world[(int)(player_loc.pY)][(int)new.pX] == 0) {
-        player_loc.pX = new.pX;
-    }
-    if(lvl.world[(int)(new.pY)][(int)player_loc.pX] == 0) {
-        player_loc.pY = new.pY;
     }
     return player_loc;
 }
