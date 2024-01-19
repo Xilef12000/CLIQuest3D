@@ -11,21 +11,21 @@ struct position kb_control(struct position player_loc)
         float pRad = player_loc.pA*M_PI/180; // degree to radians
         switch (key) {
             // rotate or walk according to key press, exit if '.'
-            case 'w':
+            case 'w': case 'W':
                 new.pX += sin(pRad)*stepXY;
                 new.pY += cos(pRad)*stepXY;
                 break;
-            case 'a':
+            case 'a': case 'A':
                 player_loc.pA+=stepA;
                 break;
-            case 's':
+            case 's': case 'S':
                 new.pX -= sin(pRad)*stepXY;
                 new.pY -= cos(pRad)*stepXY;
                 break;
-            case 'd':
+            case 'd': case 'D':
                 player_loc.pA-=stepA;
                 break;
-            case 'e':
+            case 'e': case 'E':
                 if (shoot_cool == 0){ // if no other shoot is ongoing
                     lvl.ammo--;
                     shoot = 1.0/((float) tTaken / 1000)*100;
@@ -62,7 +62,7 @@ struct position kb_control(struct position player_loc)
                 player_loc = lvl.spawn;
                 isMenu = 0;
                 break;
-            case 't':
+            case 't': case 'T':
                 switch (isMenu) { // switch menu page
                     case 99:
                     default:
