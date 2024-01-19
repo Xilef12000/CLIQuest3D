@@ -17,8 +17,8 @@
         struct position spawn;
         short ammo;
     };
-
-    struct level lvl = { // current level lvl
+    struct level lvl;
+    struct level level1 = { // current level lvl
         {
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},

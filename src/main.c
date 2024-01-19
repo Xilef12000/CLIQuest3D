@@ -14,12 +14,12 @@ int main(int argc, char const *argv[]) {
     start_fps();
 
     // setup array for distance to wall for each vertical display line
-    //unsigned short distance[cliX][2];
     struct distance *distance;
     distance = malloc(cliX*sizeof(struct distance));
      
     // initialize player_loc position
     struct position player_loc;
+    lvl = level1;
     player_loc = lvl.spawn;
 
     initOS();
