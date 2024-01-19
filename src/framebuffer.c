@@ -4,18 +4,6 @@
 #include <stdarg.h>
 #include "crossplatform.h"
 
-struct buffer {
-    unsigned short *sX;
-    unsigned short *sY;
-    unsigned long *cur;
-    unsigned short *bP;
-};
-
-struct dict {
-    unsigned short i;
-    char *s;
-};
-
 int checkBCur(struct buffer fb){
     if ((*fb.cur) >= (*fb.sX)*(*fb.sY)){
         (*fb.cur) = (*fb.sX)*(*fb.sY)-1;
