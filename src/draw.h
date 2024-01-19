@@ -12,11 +12,21 @@
     // draw different menu texts 
     void draw_menu(struct buffer fb);
     
+    // map integar in range to integar in other range
     int map(int x, int inMin, int inMax, int outMin, int outMax);
+    // map float in range to float in other range
+    float mapf(float x, float inMin, float inMax, float outMin, float outMax);
+    // Pythagorean theorem a^2 + b^2 = c^2
+    float pythf(float a, float b);
+
+    // get nearest wall from player in every viewing direction (see comment in definition)
     void ray_cast(struct position player, struct distance *distance);
 
+    // draw fps stats on screen
     void draw_fps(struct buffer fb, float time, float fps, unsigned long frame);
+    // draw shooting animation
     void draw_shoot(struct buffer fb);
+    // show stooting stats (under minimap)
     void draw_shoot_stats(struct buffer fb);
 
     #include "draw.c"

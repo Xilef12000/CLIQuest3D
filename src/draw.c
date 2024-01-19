@@ -3,14 +3,14 @@
 #include <stdlib.h>
 
 int map(int x, int inMin, int inMax, int outMin, int outMax) {
-    // mapping function of one int in range to int in other range
+    // map integar in range to integar in other range
     int n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
     if (n > outMax) n = outMax;
     if (n < outMin) n = outMin;
     return n;
 }
 float mapf(float x, float inMin, float inMax, float outMin, float outMax) {
-    // mapping function of one int in range to int in other range
+    // map float in range to float in other range
     float n = (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
     if (n > outMax) n = outMax;
     if (n < outMin) n = outMin;
@@ -29,22 +29,21 @@ void draw_3d(struct distance *distance, struct buffer fb)
                 if (cliY/2+(cliY-map(distance[j].distance,0,maxVDist,0,cliY))/2 >= i) { // if pixel is not floor -> wall
                     // draw gray shade depending on distance of wall to player
                     if (distance[j].distance < maxVDist*0.25){
-                        switch (distance[j].walltype)
-                        {
-                        case 1:
-                        default:
-                            putB(11000, fb);
-                            break;
-                        case 2:
-                            putB(12007, fb);
-                            // check for goal
-                            // check if goal wall is in middle of the screen and distance is short
-                            if (j > cliX/3 && j < cliX*2/3 && distance[j].distance < maxVDist*0.1)
-                                {isMenu = 2;}
-                            break;
-                        case 3:
-                            putB(12008, fb);
-                            break;
+                        switch (distance[j].walltype){
+                            // check for special wall types: special walltypes will only be displayed if player is close enough
+                            case 1:
+                            default:
+                                putB(11000, fb);
+                                break;
+                            case 2:
+                                putB(12007, fb);
+                                // check if goal wall is in middle of the screen and distance is short
+                                if (j > cliX/3 && j < cliX*2/3 && distance[j].distance < maxVDist*0.1)
+                                    {isMenu = 2;}
+                                break;
+                            case 3:
+                                putB(12008, fb);
+                                break;
                         } 
                     }
                     else if (distance[j].distance < maxVDist*0.5){
@@ -96,6 +95,7 @@ void draw_3d(struct distance *distance, struct buffer fb)
 void draw_map(struct position player, struct buffer fb){
     // draw map
     setBCur(0, 1, fb); //reset cursor to top left corner
+    // calculate map sction end player position on minimap
     short mY1 = player.pY-(float)mapS/2;
     mY1 = mY1 > 0 ? mY1 : 0;
     short mY2 = mY1 == 0 ? mY1+mapS : player.pY+(float)mapS/2;
@@ -106,17 +106,17 @@ void draw_map(struct position player, struct buffer fb){
     short mX2 = mX1 == 0 ? mX1+mapS : player.pX+(float)mapS/2;
     mX2 = mX2 < WORLDSIZE ? mX2 : WORLDSIZE;
     mX1 = mX2 != WORLDSIZE ? mX1 : mX2-mapS;
-    for (int i = 0; i < mapS+1; i++) {
+    for (int i = 0; i < mapS+1; i++) { // map top edge
         putB('+', fb);
         if (i != mapS) {
             putB(' ', fb);
         }
     };
     putB('\n', fb);
-    for (int i = mY1; i < mY2; i++){
+    for (int i = mY1; i < mY2; i++){ // draw every horizontal map line
         putB('+', fb);
-        for (int j = mX1; j < mX2; j++){
-            if (j != mX1) {
+        for (int j = mX1; j < mX2; j++){ //for every pixel in line
+            if (j != mX1) { // determine if wall or not
                 putB(' ', fb);
             }
             if (lvl.world[i][j] > 0) {
@@ -129,15 +129,15 @@ void draw_map(struct position player, struct buffer fb){
         putB('+', fb);
         putB('\n', fb);
     }
-    for (int i = 0; i < mapS+1; i++) {
+    for (int i = 0; i < mapS+1; i++) { // map bottom edge
         putB('+', fb);
         if (i != mapS) {
             putB(' ', fb);
         }
     };
-    draw_shoot_stats(fb);
-    setBCur((int)player.pX*2-mX1*2, player.pY-mY1+2, fb);
-    switch (map(((((int)(player.pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) {
+    draw_shoot_stats(fb); // shooting stats under map
+    setBCur((int)player.pX*2-mX1*2, player.pY-mY1+2, fb); // draw player cursor at correct location on minimap
+    switch (map(((((int)(player.pA-180+22.5) % 360)+360) % 360), 0, 360, 0, 8)) { // determine player rotation to show apropriate arrow
         case 0:
             putB(13000, fb);
             break;
@@ -168,13 +168,13 @@ void draw_menu(struct buffer fb)
 {
     clearB(fb);
     setBCur(0, 3, fb);
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) { // display logo
         printB((char*)logo[i], fb);
         putB('\n', fb);
     }
-    if (isMenu == 99){
-        for (int i = 0; i < 13; i++) {
-            if (strcmp(tutorial[i], "^") == 0){
+    if (isMenu == 99){ // if tutorial
+        for (int i = 0; i < 13; i++) { // print tutorial exchange ^ and & with OS dependent Wall type
+            if (strcmp(tutorial[i], "^") == 0){ // Goal wall type
                 for (int n = 0; n < 3; n++) {
                     fprintB(fb, "\n ");
                     for (int m = 0; m < 5; m++) {
@@ -182,7 +182,7 @@ void draw_menu(struct buffer fb)
                     }
                 }
             }
-            else if (strcmp(tutorial[i], "&") == 0){
+            else if (strcmp(tutorial[i], "&") == 0){ // destructable wall type
                 for (int n = 0; n < 3; n++) {
                     fprintB(fb, "\n ");
                     for (int m = 0; m < 5; m++) {
@@ -195,12 +195,12 @@ void draw_menu(struct buffer fb)
             }
         }
     }
-    else if (isMenu == 2){
+    else if (isMenu == 2){ // you win screen
         for (int i = 0; i < 8; i++)
             printB((char*)win[i], fb);
     }
     else {
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) { // standart start screen
             printB((char*)credits[i], fb);
         }
     }
@@ -261,7 +261,8 @@ void draw_fps(struct buffer fb, float time, float fps, unsigned long frame){
 }
 
 void draw_shoot(struct buffer fb){
-    // some raycasting to draw circle;
+    // some raycasting to draw circle
+    // radius depends on time since shot happened
     float radius = pythf(cliX-4, cliY-4)*mapf(shoot, shoot_dur, 0.0, 0.0, 1.0)*2;
     float radius_inner = 0;
     if (shoot < shoot_dur/2){
@@ -311,6 +312,7 @@ void draw_shoot(struct buffer fb){
     }
 }
 void draw_shoot_stats(struct buffer fb){
+    // display ammo left and shoot cooldown.
     putB('\n', fb);
     if (lvl.ammo >= 0){
         fprintB(fb, "Ammo: %-*d", mapS*2-5, lvl.ammo);
