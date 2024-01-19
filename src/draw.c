@@ -38,6 +38,7 @@ void draw_3d(struct distance *distance, struct buffer fb)
                         case 2:
                             putB(12007, fb);
                             // check for goal
+                            // check if goal wall is in middle of the screen and distance is short
                             if (j > cliX/3 && j < cliX*2/3 && distance[j].distance < maxVDist*0.1)
                                 {isMenu = 2;}
                             break;

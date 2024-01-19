@@ -51,6 +51,7 @@
     };
     
 
+    // declares variables as extern and initialize
 
     extern unsigned short isMenu;// = 1;
     extern unsigned short shoot;// = 0;
@@ -85,9 +86,15 @@
     int cliY = 48;
     double cliA;  // width in degrees of one character in window size
     
-
+    // select single characters for display of 3d view
+    // and writes to sreen buffer fb
+    // check for reaching goal wall if wall is displayed
     void draw_3d(struct distance *distance, struct buffer fb);
+
+    // places map on sreen buffer
     void draw_map(struct position player, struct buffer fb);
+
+    // draw different menu texts 
     void draw_menu(struct buffer fb);
     
     int map(int x, int inMin, int inMax, int outMin, int outMax);
