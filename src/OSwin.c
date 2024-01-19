@@ -16,24 +16,13 @@ int initOS()
 
     hStdin = GetStdHandle(STD_INPUT_HANDLE);
 
-    if (hOut == INVALID_HANDLE_VALUE)
-    {
-        //printf("hout:%s", hOut);
-        return 0;
-    }
+    hOut == INVALID_HANDLE_VALUE;
 
     DWORD dwMode = 0;
-    if (!GetConsoleMode(hOut, &dwMode))
-    {
-        printf("dwMode: %s", dwMode);
-        return 0;
-    }
+    GetConsoleMode(hOut, &dwMode);
 
     dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    if (!SetConsoleMode(hOut, dwMode))
-    {
-        return 0;
-    }
+    SetConsoleMode(hOut, dwMode);
 
     GetConsoleMode(hStdin, &fdwOldMode);
 
