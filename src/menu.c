@@ -44,6 +44,6 @@ const char win[7][80] = {
 {"   \\   /| |  | | |  | |   \\ \\/  \\/ /| |  | | . ` |\n"},
 {"    | | | |__| | |__| |    \\  /\\  / | |__| | |\\  |\n"},
 {"    |_|  \\____/ \\____/      \\/  \\/   \\____/|_| \\_|\n\n\n"},
-{" Press t to retutn to main screen."}
+{" Press t to return to main screen."}
 };
                                                  
