@@ -7,7 +7,7 @@ struct position kb_control(struct position player_loc)
     new = player_loc;
     int key = getKey(); // get character
 
-    if (!isMenu){
+    if (!isMenu){ // if not in menu
         float pRad = player_loc.pA*M_PI/180; // degree to radians
         switch (key) {
             // rotate or walk according to key press, exit if '.'
@@ -26,13 +26,13 @@ struct position kb_control(struct position player_loc)
                 player_loc.pA-=stepA;
                 break;
             case 'e':
-                if (shoot_cool == 0){
+                if (shoot_cool == 0){ // if no other shoot is ongoing
                     lvl.ammo--;
                     shoot = 1.0/((float) tTaken / 1000)*100;
                     shoot_cool = shoot*shoot_factor + 2;
                     shoot += 10;
                     shoot_dur = shoot;
-                    if (lvl.ammo < 0) {
+                    if (lvl.ammo < 0) { // if no ammo left
                         lvl.ammo = -1;
                         shoot = 0;
                         shoot_cool = shoot_cool/2;
@@ -63,7 +63,7 @@ struct position kb_control(struct position player_loc)
                 isMenu = 0;
                 break;
             case 't':
-                switch (isMenu) {
+                switch (isMenu) { // switch menu page
                     case 99:
                     default:
                         isMenu = 1;
