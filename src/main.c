@@ -36,6 +36,7 @@ int main(int argc, char const *argv[]) {
             setBCur(0, 1, fb);
 
             draw_3d(distance, fb);
+            // if shoot display shooting animation and (calculate) cooldown
             if (shoot > 0){
                 draw_shoot(fb);
                 shoot--;
